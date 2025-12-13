@@ -1,0 +1,162 @@
+.teacher-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.05);
+  margin-bottom: 25px;
+}
+
+/* HEADERS */
+.teacher-container h2, 
+.teacher-container h3 {
+  color: #1b3764;
+  text-align: center;
+}
+
+/* MAIN BLOCKS */
+.create-exam, 
+.questions-container,
+.listening-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CENTER LISTENING QUESTIONS */
+.listening-questions {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* INPUTS & SELECTS */
+.create-exam input, 
+.create-exam select, 
+.questions-container input, 
+.questions-container select,
+.listening-questions input,
+.listening-questions select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FILE INPUT */
+.create-exam input[type="file"] {
+  padding: 5px;
+  display: grid;
+}
+
+/* BUTTONS */
+.create-exam button, 
+.questions-container button, 
+ul li button,
+.listening-questions button {
+  background-color: #1b3764;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+.create-exam button:hover, 
+.questions-container button:hover, 
+ul li button:hover,
+.listening-questions button:hover {
+  background-color: #15305a;
+}
+
+/* QUESTION BLOCK */
+.questions-container div {
+  background-color: #fdfdfd;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* LISTENING QUESTION BLOCK STYLE (same design) */
+.listening-questions .listen-block {
+  background-color: #fdfdfd;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* LISTS */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.05);
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+th {
+  background-color: #1b3764;
+  color: #fff;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+.exam-link{
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .teacher-container {
+      padding: 15px;
+  }
+
+  .create-exam, 
+  .questions-container,
+  .listening-questions {
+      padding: 15px;
+  }
+}

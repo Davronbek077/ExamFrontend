@@ -1,0 +1,88 @@
+.exam-detail {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    font-family: "Inter", sans-serif;
+  }
+  
+  .exam-detail h2 {
+    text-align: center;
+    color: #1b3764;
+    margin-bottom: 10px;
+  }
+  
+  .exam-detail p {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .exam-detail hr {
+    margin: 25px 0;
+    border: none;
+    border-top: 2px solid #e5e5e5;
+  }
+  
+  /* Section titles */
+  .exam-detail h3 {
+    margin-top: 20px;
+    color: #1b3764;
+    font-size: 20px;
+    border-left: 5px solid #1b3764;
+    padding-left: 10px;
+  }
+  
+  /* Question Card */
+  .question-card {
+    background: #ffffff;
+    border: 1px solid #e3e8ef;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: 0.2s ease;
+  }
+  
+  /* Correct Answer Style */
+  .correct {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #e9f9ef;
+    border-left: 5px solid #2ecc71;
+    color: #137a3d;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  
+  /* MCQ list style */
+  .question-card ul {
+    margin-top: 10px;
+    padding-left: 25px;
+  }
+  
+  .question-card li {
+    margin-bottom: 6px;
+    padding: 5px 10px;
+    background: #f7f9fc;
+    border-radius: 6px;
+    border: 1px solid #e2e7ee;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .exam-detail {
+      padding: 15px;
+    }
+  
+    .question-card {
+      padding: 12px;
+    }
+  
+    .exam-detail h3 {
+      font-size: 18px;
+    }
+  
+    .correct {
+      font-size: 14px;
+    }
+  }
+  
