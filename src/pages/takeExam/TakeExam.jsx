@@ -1,179 +1,298 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api } from "../../api/api";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Select from "react-select";
+import "./TakeExam.css";
 
-// ===== UNIVERSAL SELECT STYLES =====
+/* ===== SELECT STYLES ===== */
 const customSelectStyles = {
   control: (base) => ({
     ...base,
-    backgroundColor: "#f1f1f1",
-    borderRadius: "8px",
-    padding: "4px",
-    borderColor: "#ccc",
-    minHeight: "45px",
-    boxShadow: "none",
-    ":hover": { borderColor: "#888" },
+    borderRadius: 8,
+    minHeight: 42,
   }),
-  menu: (base) => ({
-    ...base,
-    zIndex: 9999,
-    backgroundColor: "#fff",
-  }),
-  option: (base, state) => ({
-    ...base,
-    backgroundColor: state.isFocused ? "#e6e6e6" : "#fff",
-    color: "#000",
-    cursor: "pointer",
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: "#000",
-  }),
+};
+
+/* ===== QUESTION TITLES ===== */
+const getQuestionTitle = (type) => {
+  switch (type) {
+    case "mcq":
+      return "Multiple Choice Question";
+    case "truefalse":
+      return "True / False Question";
+    case "gapfill":
+      return "Fill in the Blank";
+    default:
+      return "Question";
+  }
 };
 
 export default function TakeExam() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [exam, setExam] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [started, setStarted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [result, setResult] = useState(null);
 
+  const timerRef = useRef(null);
+
+  /* ===== LOAD EXAM ===== */
   useEffect(() => {
-    const fetchExam = async () => {
-      try {
-        const res = await api.get(`/exams/${id}`);
-        setExam(res.data);
-      } catch (error) {
-        console.log("Exam load error:", error);
-      }
-    };
-    fetchExam();
+    api.get(`/exams/${id}`).then((res) => {
+      setExam(res.data);
+      setTimeLeft(res.data.timeLimit * 60); // minutes → seconds
+    });
   }, [id]);
 
-  function setAns(qid, value) {
-    const list = [...answers];
-    const f = list.find((a) => a.qid === qid);
+  /* ===== TIMER ===== */
+  useEffect(() => {
+    if (!started) return;
 
-    if (f) f.answer = value;
-    else list.push({ qid, answer: value });
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          autoSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-    setAnswers(list);
-  }
+    return () => clearInterval(timerRef.current);
+  }, [started]);
 
+  /* ===== ANSWERS ===== */
+  const setAns = (qid, value) => {
+    setAnswers((prev) => {
+      const copy = [...prev];
+      const found = copy.find(a => a.questionId === qid);
+  
+      if (found) {
+        found.answer = value;
+      } else {
+        copy.push({
+          questionId: qid,
+          answer: value
+        });
+      }
+      return copy;
+    });
+  };
+  
+  /* ===== SUBMIT ===== */
   async function submit() {
+    console.log("SUBMIT PAYLOAD:", {
+      examId: id,
+      answers
+    });
+  
     try {
       const res = await api.post("/results/submit", {
         examId: id,
         answers,
       });
-
-      alert("Natija: " + res.data.result.score + " ball");
+  
+      alert(
+        `Natija: ${res.data.result.score} ball\n` +
+        `Foiz: ${res.data.result.percentage}%\n` +
+        (res.data.result.passed ? "✅ O‘tdingiz" : "❌ O‘tmadingiz")
+      );
     } catch (e) {
-      alert("Xatolik: " + e.response?.data?.message);
+      console.error("SUBMIT ERROR:", e.response?.data || e);
+      alert("Xatolik yuz berdi");
     }
   }
+  
+
+  const autoSubmit = async () => {
+    alert("⏰ Vaqtingiz tugadi! Imtihon avtomatik yuborildi.");
+    await submit();
+  };
 
   if (!exam) return <p>Yuklanmoqda...</p>;
 
+  /* ===== RESULT VIEW ===== */
+  if (result) {
+    return (
+      <div className="result-box">
+        <h2>📊 Natija</h2>
+        <p><b>Ball:</b> {result.score}</p>
+        <p><b>Foiz:</b> {result.percentage}%</p>
+        <h3 className={result.passed ? "pass" : "fail"}>
+          {result.passed ? "✅ O‘tdingiz" : "❌ O‘ta olmadingiz"}
+        </h3>
+
+        <button onClick={() => navigate("/")}>Bosh sahifa</button>
+      </div>
+    );
+  }
+
   return (
     <div className="take-container">
-      <h2>{exam.title}</h2>
 
-      {/* === AUDIO === */}
-      {exam.listeningAudio && (
-        <audio
-          controls
-          style={{ marginTop: "20px" }}
-          src={`https://studentbackend-snw0.onrender.com/${exam.listeningAudio}`}
+      {/* ===== MODAL ===== */}
+      {!started && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h2>Imtihonni boshlashga tayyormisiz?</h2>
+            <p>⏱ Vaqt: {exam.timeLimit} daqiqa</p>
+
+            <div className="modal-actions">
+              <button className="btn-start" onClick={() => setStarted(true)}>
+                Tayyorman
+              </button>
+              <button className="btn-cancel" onClick={() => navigate("/")}>
+                Tayyor emasman
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== HEADER ===== */}
+      {started && (
+        <>
+          <div className="exam-header">
+            <h2>{exam.title}</h2>
+            <div className="timer">
+              ⏰ {Math.floor(timeLeft / 60)
+                .toString()
+                .padStart(2, "0")}
+              :
+              {(timeLeft % 60).toString().padStart(2, "0")}
+            </div>
+          </div>
+
+          {/* ===== LISTENING TF ===== */}
+          {exam.listeningTF?.length > 0 && (
+            <section className="block">
+              <h3>Listening – True / False</h3>
+              {exam.listeningTF.map((q) => (
+  <div key={q._id} className="question-box">
+    <p>{q.statement}</p>
+
+    <Select
+      styles={customSelectStyles}
+      options={[
+        { value: "true", label: "True" },
+        { value: "false", label: "False" },
+      ]}
+      onChange={(e) => setAns(q._id, e.value)}
+    />
+  </div>
+))}
+
+            </section>
+          )}
+
+          {/* ===== LISTENING GAP ===== */}
+          {exam.listeningGaps?.length > 0 && (
+            <section className="block">
+              <h3>Listening – Gap Fill</h3>
+              {exam.listeningGaps.map((q) => (
+  <div key={q._id} className="question-box">
+    <p>{q.sentence}</p>
+
+    <input
+      type="text"
+      onChange={(e) => setAns(q._id, e.target.value)}
+    />
+  </div>
+))}
+
+            </section>
+          )}
+
+          {/* ===== GRAMMAR ===== */}
+          {exam.grammarQuestions?.length > 0 && (
+            <section className="block">
+              <h3>Grammar – Word Ordering</h3>
+              {exam.grammarQuestions.map((q, i) => (
+  <div key={q._id} className="question-box">
+    <b>{q.scrambledWords}</b>
+
+    <input
+      type="text"
+      placeholder="To‘g‘ri gapni yozing"
+      onChange={(e) => setAns(q._id, e.target.value)}
+    />
+  </div>
+))}
+            </section>
+          )}
+
+          {/* ===== TENSE ===== */}
+          {exam.tenseTransforms?.length > 0 && (
+            <section className="block">
+              <h3>Tense Transformation</h3>
+              {exam.tenseTransforms.map((t) => (
+  <div key={t._id} className="question-box">
+    <p><b>{t.baseSentence}</b></p>
+
+    {t.transforms.map((tr) => (
+      <div key={tr._id}>
+        <p>{tr.tense}</p>
+        <input
+          type="text"
+          placeholder="To‘g‘ri gapni yozing"
+          onChange={(e) =>
+            setAns(tr._id, e.target.value)
+          }
         />
-      )}
+      </div>
+    ))}
+  </div>
+))}
 
-      {/* LISTENING TRUE/FALSE */}
-      {exam.listeningTF?.length > 0 && (
-        <div className="block">
-          <h3>Listening – True/False</h3>
+            </section>
+          )}
 
-          {exam.listeningTF.map((item, i) => (
-            <div key={i} className="question-box">
-              <p>{item.statement}</p>
+          {/* ===== BASIC QUESTIONS ===== */}
+          {exam.questions.map((q, i) => (
+            <section key={q._id} className="block">
+              <h3>{i + 1}. {getQuestionTitle(q.type)}</h3>
+              <p>{q.questionText}</p>
 
-              <Select
-                styles={customSelectStyles}
-                placeholder="Tanlang"
-                options={[
-                  { value: "true", label: "True" },
-                  { value: "false", label: "False" },
-                ]}
-                onChange={(e) => setAns("ltf" + i, e.value)}
-              />
-            </div>
+              {q.type === "mcq" && (
+                <Select
+                  styles={customSelectStyles}
+                  options={q.options.map((o) => ({
+                    value: o,
+                    label: o,
+                  }))}
+                  onChange={(e) => setAns(q._id, e.value)}
+                />
+              )}
+
+              {q.type === "truefalse" && (
+                <Select
+                  styles={customSelectStyles}
+                  options={[
+                    { value: "true", label: "True" },
+                    { value: "false", label: "False" },
+                  ]}
+                  onChange={(e) => setAns(q._id, e.value)}
+                />
+              )}
+
+              {q.type === "gapfill" && (
+                <input
+                  type="text"
+                  onChange={(e) => setAns(q._id, e.target.value)}
+                />
+              )}
+            </section>
           ))}
-        </div>
+
+          <button className="submit-btn" onClick={submit}>
+            Imtihonni yuborish
+          </button>
+        </>
       )}
-
-      {/* LISTENING GAPFILL */}
-      {exam.listeningGaps?.length > 0 && (
-        <div className="block">
-          <h3>Listening – Gapfill</h3>
-
-          {exam.listeningGaps.map((item, i) => (
-            <div key={i} className="question-box">
-              <p>{item.sentence}</p>
-
-              <input
-                type="text"
-                placeholder="Javobni kiriting"
-                onChange={(e) => setAns("lgap" + i, e.target.value)}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* BASIC QUESTIONS */}
-      {exam.questions.map((q) => (
-        <div key={q._id} className="question-box">
-          <h4>{q.questionText}</h4>
-
-          {/* MCQ */}
-          {q.type === "mcq" && (
-            <Select
-              styles={customSelectStyles}
-              placeholder="Variantni tanlang"
-              options={q.options.map((op) => ({
-                value: op,
-                label: op,
-              }))}
-              onChange={(e) => setAns(q._id, e.value)}
-            />
-          )}
-
-          {/* TRUE/FALSE */}
-          {q.type === "truefalse" && (
-            <Select
-              styles={customSelectStyles}
-              placeholder="Tanlang"
-              options={[
-                { value: "true", label: "True" },
-                { value: "false", label: "False" },
-              ]}
-              onChange={(e) => setAns(q._id, e.value)}
-            />
-          )}
-
-          {/* GAPFILL */}
-          {q.type === "gapfill" && (
-            <input
-              type="text"
-              placeholder="Javobni yozing"
-              onChange={(e) => setAns(q._id, e.target.value)}
-            />
-          )}
-        </div>
-      ))}
-
-      <button className="submit-btn" onClick={submit}>
-        Imtihonni Yuborish
-      </button>
     </div>
   );
 }

@@ -1,29 +1,36 @@
 import React, { useState } from "react";
-import "./LoginForm.css"
+import { useNavigate } from "react-router-dom";
+import "./LoginForm.css";
 
 export default function LoginForm({ setRole }) {
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (password === "2315") setRole("teacher");
-    else if (password === "1412") setRole("student");
-    else alert("Noto‘g‘ri parol!");
+    if (password === "2315") {
+      setRole("teacher");
+      navigate("/");
+    }
+    else if (password === "1412") {
+      setRole("student");
+      navigate("/");
+    }
+    else {
+      alert("Noto‘g‘ri parol!");
+    }
   };
 
   return (
-    <div className="login-container"
-    style={{
-      display: "grid",
-      placeItems:"center",
-      marginTop: 150,
-    }}>
+    <div className="login-container">
       <h2>Login</h2>
+
       <input
         type="password"
         placeholder="Parolni kiriting"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
       <button onClick={handleLogin}>Kirish</button>
     </div>
   );

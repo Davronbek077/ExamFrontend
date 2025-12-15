@@ -1,41 +1,55 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import LoginForm from "./pages/loginForm/LoginForm";
 import StudentPanel from "./pages/student/StudentPanel";
-import TeacherPanel from "./pages/teacher/TeacherPanel";
-import TakeExam from "./pages/takeExam/TakeExam";
+import TakeExam from "./pages/takeExam/takeExam";
 import ExamDetail from "./pages/examDetail/ExamDetail";
 import Stats from "./pages/stats/Stats";
-import "./App.css";
+
+import TeacherDashboard from "./pages/teacher/TeacherPanel";
+import CreateExam from "./pages/teacher/CreateExam";
+import ExamsList from "./pages/teacher/ExamList";
 
 function App() {
   const [role, setRole] = useState(null);
-
-  if (!role) {
-    return <LoginForm setRole={setRole} />;
-  }
 
   return (
     <BrowserRouter>
       <Routes>
 
+        {/* ===== LOGIN ===== */}
+        <Route
+          path="/login"
+          element={<LoginForm setRole={setRole} />}
+        />
+
+        {/* ===== TEACHER ROUTES ===== */}
         {role === "teacher" && (
           <>
-            <Route path="/" element={<TeacherPanel />} />
+            <Route path="/" element={<TeacherDashboard />} />
+            <Route path="/teacher/create" element={<CreateExam />} />
+            <Route path="/teacher/exams" element={<ExamsList />} />
             <Route path="/stats/:id" element={<Stats />} />
             <Route path="/exam/:id" element={<ExamDetail />} />
           </>
         )}
 
+        {/* ===== STUDENT ROUTES ===== */}
         {role === "student" && (
           <>
             <Route path="/" element={<StudentPanel />} />
+            <Route path="/take/:id" element={<TakeExam />} />
+            <Route path="/exam/:id" element={<ExamDetail />} />
           </>
         )}
 
-        {/* UNIVERSAL ROUTE — IKKALA ROL HAM FOYDALANADI */}
-        <Route path="/take/:id" element={<TakeExam />} />
-        
+        {/* ===== DEFAULT ===== */}
+        <Route
+          path="*"
+          element={<Navigate to={role ? "/" : "/login"} />}
+        />
+
       </Routes>
     </BrowserRouter>
   );

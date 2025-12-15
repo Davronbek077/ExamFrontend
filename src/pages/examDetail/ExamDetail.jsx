@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../api/api";
 import "./ExamDetail.css";
+import { FaHeadphones } from "react-icons/fa6";
+import { FaRegCircleQuestion } from "react-icons/fa6";
 
 export default function ExamDetail() {
   const { id } = useParams();
@@ -16,12 +18,12 @@ export default function ExamDetail() {
   return (
     <div className="exam-detail">
       <h2>{exam.title}</h2>
-      <p>⏱ Vaqt limiti: {exam.timeLimit} daqiqa</p>
-      <p>🎯 O‘tish foizi: {exam.passPercentage}%</p>
+      <p>Vaqt limiti: {exam.timeLimit} daqiqa</p>
+      <p>O‘tish foizi: {exam.passPercentage}%</p>
 
       <hr />
 
-      <h3>📌 Umumiy Savollar</h3>
+      <h3><FaRegCircleQuestion /> Umumiy Savollar</h3>
       {exam.questions.map((q, i) => (
         <div key={i} className="question-card">
           <p><b>{i + 1}) {q.questionText}</b></p>
@@ -45,7 +47,7 @@ export default function ExamDetail() {
 
       {exam.listeningTF.length > 0 && (
         <>
-          <h3>🎧 Listening — True / False</h3>
+          <h3><FaHeadphones /> Listening — True / False</h3>
           {exam.listeningTF.map((q, i) => (
             <div key={i} className="question-card">
               <p><b>{q.statement}</b></p>
@@ -57,7 +59,7 @@ export default function ExamDetail() {
 
       {exam.listeningGaps.length > 0 && (
         <>
-          <h3>🎧 Listening — Gap Filling</h3>
+          <h3><FaHeadphones /> Listening — Gap Filling</h3>
           {exam.listeningGaps.map((q, i) => (
             <div key={i} className="question-card">
               <p>{q.sentence}</p>
@@ -69,7 +71,7 @@ export default function ExamDetail() {
 
       {exam.grammarQuestions.length > 0 && (
         <>
-          <h3>✍️ Grammar — Word Ordering</h3>
+          <h3>Grammar — Word Ordering</h3>
           {exam.grammarQuestions.map((q, i) => (
             <div key={i} className="question-card">
               <p>Aralash gap: <b>{q.scrambledWords}</b></p>

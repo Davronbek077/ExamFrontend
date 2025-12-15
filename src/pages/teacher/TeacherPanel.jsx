@@ -13,7 +13,6 @@ export default function TeacherPanel() {
   const [questions, setQuestions] = useState([]);
 
   // LISTENING
-  const [listeningAudio, setListeningAudio] = useState(null);
   const [listeningTF, setListeningTF] = useState([]);
   const [listeningGaps, setListeningGaps] = useState([]);
 
@@ -104,72 +103,59 @@ export default function TeacherPanel() {
     setListeningGaps(c);
   };
 
-  // --- CREATE EXAM ---
+
   const createExam = async () => {
-    if (!title) return alert("Iltimos, imtihon nomini kiriting");
+    if (!title) return alert("Imtihon nomini kiriting");
   
     try {
-      // 1) Basic questions (mcq, truefalse, gapfill)
       const questionsArr = questions
         .filter(q => ["mcq", "truefalse", "gapfill"].includes(q.type))
         .map(q => ({
           type: q.type,
           questionText: q.questionText,
           options: q.options || [],
-          correctAnswer: q.correctAnswer || "",
+          correctAnswer: q.correctAnswer,
           points: 1
         }));
   
-      // 2) Grammar questions
       const grammarArr = questions
-        .filter(q => q.type === "grammar")
+        .filter(q =>
+          q.type === "grammar" &&
+          q.scrambledWords.trim() &&
+          q.correctSentence.trim()
+        )
         .map(q => ({
           scrambledWords: q.scrambledWords,
           correctSentence: q.correctSentence,
           points: 1
         }));
   
-      // 3) Tense transforms
       const tenseArr = questions
-        .filter(q => q.type === "tense")
+        .filter(q =>
+          q.type === "tense" &&
+          Object.keys(q.tenseAnswers || {}).length
+        )
         .map(q => ({
           baseSentence: q.baseSentence,
-          transforms: Object.entries(q.tenseAnswers || {})
-            .map(([tense, correctSentence]) => ({
+          transforms: Object.entries(q.tenseAnswers).map(
+            ([tense, correctSentence]) => ({
               tense,
               correctSentence,
               points: 1
-            })),
+            })
+          ),
           points: 1
         }));
   
-      // 4) Listening TF
-      const listeningTFFormatted = listeningTF.map(i => ({
-        statement: i.statement,
-        correct: i.correct
-      }));
-  
-      // 5) Listening Gapfills
-      const listeningGapsFormatted = listeningGaps.map(i => ({
-        sentence: i.sentence,
-        correctWord: i.correctWord
-      }));
-  
-      // SEND DATA
-      const fd = new FormData();
-      fd.append("title", title);
-      fd.append("timeLimit", timeLimit);
-      fd.append("passPercentage", passPercentage);
-      fd.append("questions", JSON.stringify(questionsArr));
-      fd.append("grammarQuestions", JSON.stringify(grammarArr));
-      fd.append("tenseTransforms", JSON.stringify(tenseArr));
-      fd.append("listeningTF", JSON.stringify(listeningTFFormatted));
-      fd.append("listeningGaps", JSON.stringify(listeningGapsFormatted));
-  
-      if (listeningAudio) fd.append("audio", listeningAudio);
-  
-      await api.post("/exams/create", fd, {
-        headers: { "Content-Type": "multipart/form-data" }
+      await api.post("/exams/create", {
+        title,
+        timeLimit,
+        passPercentage,
+        questions: questionsArr,
+        grammarQuestions: grammarArr,
+        tenseTransforms: tenseArr,
+        listeningTF,
+        listeningGaps
       });
   
       alert("Imtihon yaratildi!");
@@ -179,8 +165,6 @@ export default function TeacherPanel() {
       alert("Xatolik yuz berdi!");
     }
   };
-  
-  
 
   const fetchStats = async (examId) => {
     const res = await api.get(`/results/stats/${examId}`);
@@ -188,254 +172,47 @@ export default function TeacherPanel() {
   };
 
   return (
-    <div className="teacher-container">
-      <h2>Teacher Panel</h2>
+    <div className="admin-dashboard">
+      <h2 className="adminDashboard-title">Admin Dashboard</h2>
+  
+  {/* STATISTICS */}
+  <div className="stats-grid">
+    <div className="stat-card info">
+      <h4>Jami topshirganlar</h4>
+      <p>{stats?.total || 0}</p>
+    </div>
 
-      {/* CREATE EXAM */}
-      <div className="create-exam">
-        <input
-          type="text"
-          placeholder="Imtihon nomi"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+    <div className="stat-card success">
+      <h4>O‘tganlar</h4>
+      <p>{stats?.passed || 0}</p>
+    </div>
 
-        <input
-          type="number"
-          placeholder="Vaqt limiti"
-          value={timeLimit}
-          onChange={(e) => setTimeLimit(e.target.value)}
-        />
+    <div className="stat-card danger">
+      <h4>Yiqilganlar</h4>
+      <p>{stats?.failed || 0}</p>
+    </div>
 
-        <input
-          type="number"
-          placeholder="O‘tish foizi"
-          value={passPercentage}
-          onChange={(e) => setPassPercentage(e.target.value)}
-        />
+    <div className="stat-card info">
+      <h4>Bugun topshirganlar</h4>
+      <p>{stats?.today || 0}</p>
+    </div>
+  </div>
 
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={(e) => setListeningAudio(e.target.files[0])}
-        />
-      </div>
+  {/* QUICK MENU */}
+  <div className="quick-menu">
+    <h3>Tezkor menyu</h3>
 
-      {/* LISTENING QUESTIONS */}
-      <div className="listening-questions">
-        <h3>Listening – True/False</h3>
-        {listeningTF.map((item, i) => (
-          <div key={i} className="list-item">
-            <input
-              type="text"
-              placeholder="Statement"
-              value={item.statement}
-              onChange={(e) => updateListeningTF(i, "statement", e.target.value)}
-            />
+    <div className="menu-buttons">
+      <button onClick={() => navigate("/teacher/create")}>
+        Imtihon qo‘shish
+      </button>
 
-            <select
-              value={item.correct}
-              onChange={(e) =>
-                updateListeningTF(i, "correct", e.target.value === "true")
-              }
-            >
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          </div>
-        ))}
-        <button onClick={addListeningTF}>+ True/False qo‘shish</button>
-
-        <h3>Listening – Gapfill</h3>
-        {listeningGaps.map((item, i) => (
-          <div key={i} className="list-item">
-            <input
-              type="text"
-              placeholder="Sentence with gap"
-              value={item.sentence}
-              onChange={(e) => updateListeningGap(i, "sentence", e.target.value)}
-            />
-
-            <input
-              type="text"
-              placeholder="Correct answer"
-              value={item.correctWord}   // ✅ answer emas
-              onChange={(e) =>
-                updateListeningGap(i, "correctWord", e.target.value)
-              }
-            />
-          </div>
-        ))}
-        <button onClick={addListeningGap}>+ Gapfill qo‘shish</button>
-      </div>
-
-      {/* QUESTIONS */}
-      <h3>Asosiy savollar</h3>
-      <div className="questions-container">
-        {questions.map((q, i) => (
-          <div key={i} className="question-block">
-            <select
-              value={q.type}
-              onChange={(e) => updateQuestion(i, "type", e.target.value)}
-            >
-              <option value="mcq">MCQ</option>
-              <option value="truefalse">True/False</option>
-              <option value="gapfill">Gapfill</option>
-              <option value="grammar">Grammar</option>
-              <option value="tense">Tense</option>
-            </select>
-
-            <input
-              type="text"
-              placeholder="Savol matni"
-              value={q.questionText}
-              onChange={(e) => updateQuestion(i, "questionText", e.target.value)}
-            />
-
-            {/* MCQ */}
-            {q.type === "mcq" &&
-              q.options.map((opt, oi) => (
-                <input
-                  key={oi}
-                  type="text"
-                  placeholder={`Variant ${oi + 1}`}
-                  value={opt}
-                  onChange={(e) =>
-                    updateQuestion(i, "option", e.target.value, oi)
-                  }
-                />
-              ))}
-
-            {(q.type === "mcq" ||
-              q.type === "truefalse" ||
-              q.type === "gapfill") && (
-              <input
-                type="text"
-                placeholder="To‘g‘ri javob"
-                value={q.correctAnswer}
-                onChange={(e) =>
-                  updateQuestion(i, "correctAnswer", e.target.value)
-                }
-              />
-            )}
-
-            {/* GRAMMAR */}
-            {q.type === "grammar" && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Scrambled words"
-                  value={q.scrambledWords}
-                  onChange={(e) =>
-                    updateQuestion(i, "scrambledWords", e.target.value)
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Correct sentence"
-                  value={q.correctSentence}
-                  onChange={(e) =>
-                    updateQuestion(i, "correctSentence", e.target.value)
-                  }
-                />
-              </>
-            )}
-
-            {/* TENSE */}
-            {q.type === "tense" && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Base sentence"
-                  value={q.baseSentence}
-                  onChange={(e) =>
-                    updateQuestion(i, "baseSentence", e.target.value)
-                  }
-                />
-
-                <p>Zamonlar:</p>
-                {[
-                  "presentSimple",
-                  "pastSimple",
-                  "futureSimple",
-                  "presentContinuous"
-                ].map((t) => (
-                  <label key={t}>
-                    <input
-                      type="checkbox"
-                      checked={q.tenses.includes(t)}
-                      onChange={() => toggleTense(i, t)}
-                    />
-                    {t}
-                  </label>
-                ))}
-
-                {q.tenses.map((t) => (
-                  <input
-                    key={t}
-                    type="text"
-                    placeholder={`${t} — to‘g‘ri javob`}
-                    value={q.tenseAnswers?.[t] || ""}
-                    onChange={(e) =>
-                      updateTenseAnswer(i, t, e.target.value)
-                    }
-                  />
-                ))}
-              </>
-            )}
-          </div>
-        ))}
-
-        <button onClick={addQuestion}>Savol qo‘shish</button>
-
-        <button onClick={createExam}>Imtihon yaratish</button>
-      </div>
-
-      {/* EXAMS LIST */}
-      <h3>Imtihonlar</h3>
-      <ul>
-        {exams.map((e) => (
-          <li key={e._id}>
-          <span 
-            className="exam-link"
-            onClick={() => navigate(`/exam/${e._id}`)}
-          >
-            {e.title}
-          </span>
-        
-          <button onClick={() => fetchStats(e._id)}>Statistika</button>
-        </li>
-        
-        ))}
-      </ul>
-
-      {/* STATS */}
-      {stats && (
-        <div>
-          <h3>Statistika: {stats.total} ta</h3>
-          <p>Passed: {stats.passed}</p>
-          <p>Failed: {stats.failed}</p>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Score</th>
-                <th>%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.results.map((r) => (
-                <tr key={r._id}>
-                  <td>{r.studentId.name}</td>
-                  <td>{r.score}</td>
-                  <td>{r.percentage}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <button onClick={() => navigate("/teacher/exams")}>
+        Imtihonlar ro‘yxati
+      </button>
+    </div>
+  </div>
     </div>
   );
+  
 }

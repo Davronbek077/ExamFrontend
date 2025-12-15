@@ -1,66 +1,81 @@
-.take-exam {
-  max-width: 700px;
+.take-container {
+  max-width: 900px;
   margin: 30px auto;
   padding: 20px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.exam-title {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #1b3764;
-}
-
-.question-card {
-  background: #f7f9fc;
-  padding: 15px;
+.exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 15px 20px;
   border-radius: 10px;
   margin-bottom: 20px;
-  border: 1px solid #ddd;
 }
 
-.mcq-select {
+.timer {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.block {
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.submit-btn {
   width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  background-color: #f1f1f1 !important;
-  color: #000 !important;
-  appearance: none;
+  padding: 14px;
+  background: #2ecc71;
+  color: #fff;
+  font-size: 17px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.mcq-option {
-  background-color: #f1f1f1 !important;
-  color: #000 !important;
+/* ===== MODAL ===== */
+.start-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: grid;
+  place-items: center;
+  z-index: 999;
 }
 
-/* Firefox uchun */
-select option {
-  background-color: #f1f1f1 !important;
-  color: #000 !important;
-}
-
-/* Chrome uchun majburiy fix */
-select:focus > option:checked {
-  background: #dcdcdc !important;
-  color: #000 !important;
-}
-
-.written-answer {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: vertical;
-}
-
-.loading {
+.modal-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 14px;
   text-align: center;
-  margin-top: 50px;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn-start {
+  flex: 1;
+  background: #3498db;
+  color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+}
+
+.btn-cancel {
+  flex: 1;
+  background: #ccc;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
 }
