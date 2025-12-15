@@ -27,7 +27,7 @@ const getQuestionTitle = (type) => {
   }
 };
 
-export default function takeExam() {
+export default function TakeExam() {
   const { id } = useParams();
   const navigate = useNavigate();
 
