@@ -3,10 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import LoginForm from "./pages/loginForm/LoginForm";
 import StudentPanel from "./pages/student/StudentPanel";
-import TakeExam from "./pages/takeExam/takeExam";
 import ExamDetail from "./pages/examDetail/ExamDetail";
 import Stats from "./pages/stats/Stats";
-
+import TakeExam from "./pages/takeExam/takeExam";
 import TeacherDashboard from "./pages/teacher/TeacherPanel";
 import CreateExam from "./pages/teacher/CreateExam";
 import ExamsList from "./pages/teacher/ExamList";
