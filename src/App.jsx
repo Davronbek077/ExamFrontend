@@ -8,7 +8,7 @@ import Stats from "./pages/stats/Stats";
 import TeacherDashboard from "./pages/teacher/TeacherPanel";
 import CreateExam from "./pages/teacher/CreateExam";
 import ExamsList from "./pages/teacher/ExamList";
-import TakeExam from "./pages/takeExam/takeExam";
+import TakeExam from "./pages/takeExam/TakeExam";
 
 function App() {
   const [role, setRole] = useState(null);
