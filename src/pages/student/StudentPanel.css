@@ -10,11 +10,23 @@
   .student-container h2, .student-container h3{
     text-align: center;
   }
+
+  .student-container h3{
+    margin-bottom: 20px;
+  }
   
   .student-container ul li {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ddd;
+  }
+
+  .student-container ul li button{
+    background-color: blue;
+  }
+
+  .student-container ul li button:hover{
+    background-color: rgb(25, 25, 198);
   }
   

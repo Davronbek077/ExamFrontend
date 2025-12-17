@@ -9,6 +9,7 @@ import TeacherDashboard from "./pages/teacher/TeacherPanel";
 import CreateExam from "./pages/teacher/CreateExam";
 import ExamsList from "./pages/teacher/ExamList";
 import TakeExam from "./pages/TakeExam/TakeExam";
+import EditExam from "./pages/editExam/EditExam";
 
 function App() {
   const [role, setRole] = useState(null);
@@ -31,6 +32,7 @@ function App() {
             <Route path="/teacher/exams" element={<ExamsList />} />
             <Route path="/stats/:id" element={<Stats />} />
             <Route path="/exam/:id" element={<ExamDetail />} />
+            <Route path="/exams/edit/:id" element={<EditExam /> }/>
           </>
         )}
 

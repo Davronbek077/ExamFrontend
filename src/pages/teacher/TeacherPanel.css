@@ -445,6 +445,65 @@ body {
   font-size: 25px;
 }
 
+.teacher-container .statistic-btn{
+  background-color: blue;
+}
+
+.teacher-container .statistic-btn:hover{
+  background-color: rgb(25, 25, 198);
+}
+
+.exam-actions {
+  position: relative; /* ⭐ SHART */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 3 nuqta */
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: black;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: absolute; /* ⭐ MUHIM */
+  top: 36px;          /* pastga chiqadi */
+  right: 0;
+  min-width: 160px;
+
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  z-index: 999;       /* hamma ustida */
+}
+
+/* Dropdown tugmalar */
+.dropdown button {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: black;
+}
+
+.dropdown button:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown .danger {
+  color: #dc2626;
+}
+
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .list-item {
@@ -455,3 +514,4 @@ body {
     padding: 15px;
   }
 }
+

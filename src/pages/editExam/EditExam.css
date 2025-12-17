@@ -1,0 +1,184 @@
+/* ===== GLOBAL ===== */
+.edit-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .edit-container h2 {
+    margin-bottom: 25px;
+    text-align: center;
+    color: #111827;
+  }
+  
+  .edit-container h3 {
+    margin: 30px 0 15px;
+    color: #1f2937;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 5px;
+  }
+  
+  /* ===== LABEL & INPUT ===== */
+  .edit-container label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .edit-container input,
+  .edit-container select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  
+  .edit-container input:focus,
+  .edit-container select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  
+  /* ===== QUESTION BLOCK ===== */
+  .question-block {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .question-block select {
+    margin-bottom: 10px;
+  }
+  
+  .question-block input {
+    margin-bottom: 8px;
+  }
+  
+  /* ===== TENSE CHECKBOXES ===== */
+  .question-block p {
+    margin: 10px 0 6px;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .question-block label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 15px;
+    font-weight: 500;
+  }
+  
+  /* ===== DELETE QUESTION ===== */
+
+  .delete-question-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .delete-question-btn:hover {
+    background: #fecaca;
+    color: #991b1b;
+  }
+  
+  .delete-question-btn:hover {
+    background: #fecaca;
+  }
+  
+  /* ===== ADD BUTTONS ===== */
+  .edit-container > button,
+  .edit-container .edit-block + button {
+    margin-top: 15px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .edit-container > button:hover,
+  .edit-container .edit-block + button:hover {
+    background: #1d4ed8;
+  }
+  
+  /* ===== LISTENING BLOCK ===== */
+  .edit-block {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .edit-block input {
+    margin-bottom: 8px;
+  }
+
+  .edit-block button {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  
+  .edit-block button:hover {
+    background: #fecaca;
+  }
+  
+  
+  /* ===== SAVE BUTTON ===== */
+  .save-btn {
+    width: 100%;
+    margin-top: 30px;
+    background: #16a34a;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  
+  .save-btn:hover {
+    background: #15803d;
+  }
+  
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .edit-container {
+      padding: 18px;
+    }
+  
+    .question-block {
+      padding: 12px;
+    }
+  
+    .edit-container h2 {
+      font-size: 20px;
+    }
+  }
+  
