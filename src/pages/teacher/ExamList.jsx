@@ -18,12 +18,16 @@ export default function ExamsList() {
     api.get("/exams/all").then(res => setExams(res.data));
   };
 
-  const deleteExam = async (id) => {
-    if (!window.confirm("Bu imtihonni o'chirmoqcbimisiz?")) return;
-
-    await api.delete(`/exams/${id}`);
-    setExams(prev => prev.filter(e => e._id !== id));
-  }
+  const deleteExam = async () => {
+    try {
+      await api.delete(`/exams/${deleteExamId}`);
+      setExams(prev => prev.filter(e => e._id !== deleteExamId));
+      setDeleteExamId(null); // modal yopiladi
+    } catch (err) {
+      console.error(err);
+      alert("O‘chirishda xato");
+    }
+  };  
 
   return (
     <div className="teacher-container">
@@ -65,17 +69,47 @@ export default function ExamsList() {
                     Tahrirlash
                   </button>
                   <button
-                    className="danger"
-                    onClick={() => deleteExam(exam._id)}
-                  >
-                    O‘chirish
-                  </button>
+  className="danger"
+  onClick={() => {
+    setDeleteExamId(exam._id);
+    setOpenMenuId(null);
+  }}
+>
+  O‘chirish
+</button>
+
                 </div>
               )}
             </div>
           </li>
         ))}
       </ul>
+
+      {deleteExamId && (
+  <div className="modal-overlay">
+    <div className="modal-box">
+      <h3>Imtihonni o‘chirish</h3>
+      <p>Rostdan ham bu imtihonni o‘chirmoqchimisiz?</p>
+
+      <div className="modal-actions">
+        <button
+          className="cancel-btn"
+          onClick={() => setDeleteExamId(null)}
+        >
+          Bekor qilish
+        </button>
+
+        <button
+          className="danger-btn"
+          onClick={deleteExam}
+        >
+          O‘chirish
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
