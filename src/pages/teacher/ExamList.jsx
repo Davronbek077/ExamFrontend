@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api } from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import "./TeacherPanel.css";
 
 export default function ExamsList() {
@@ -8,6 +9,7 @@ export default function ExamsList() {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [deleteExamId, setDeleteExamId] = useState(null);
 
+  const menuRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +29,27 @@ export default function ExamsList() {
       console.error(err);
       alert("O‘chirishda xato");
     }
-  };  
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, []);
 
   return (
     <div className="teacher-container">
+      <button className="back-btn" onClick={() => navigate(-1)}>
+      <MdOutlineKeyboardBackspace className="back-icon" /> Back
+      </button>
       <h2>Imtihonlar ro‘yxati</h2>
 
       <ul className="exam-list">
@@ -64,7 +83,7 @@ export default function ExamsList() {
               </button>
 
               {openMenuId === exam._id && (
-                <div className="dropdown">
+                <div className="dropdown" ref={menuRef}>
                   <button onClick={() => navigate(`/exams/edit/${exam._id}`)}>
                     Tahrirlash
                   </button>

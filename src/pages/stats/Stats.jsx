@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../api/api";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import "./Stats.css";
 
 export default function Stats() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [stats, setStats] = useState(null);
 
@@ -16,10 +20,20 @@ export default function Stats() {
       });
   }, [id]);
 
-  if (!stats) return <p>Yuklanmoqda...</p>;
+  if (!stats) {
+    return (
+      <div className="loader-wrapper">
+        <ClipLoader color="#2d5bff" size={55}/>
+        <p>Yuklanmoqda...</p>
+      </div>
+    )
+  };
 
   return (
     <div className="stats-container">
+      <button className="back-btn" onClick={() => navigate(-1)}>
+      <MdOutlineKeyboardBackspace className="back-icon" /> Back
+      </button>
       <h2>Imtihon statistikasi</h2>
 
       <div className="stats-cards">

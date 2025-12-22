@@ -3,6 +3,7 @@ import { api } from "../../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 import "./TakeExam.css";
 
 /* ===== SELECT STYLE ===== */
@@ -63,6 +64,16 @@ export default function TakeExam() {
     }));
   };
 
+  const QUESTION_TITLES = {
+    listeningTF: "Listening — True / False",
+    listeningGap: "Listening — Gap Fill",
+    grammar: "Grammar",
+    tense: "Tense Transformation",
+    mcq: "Multiple Choice",
+    truefalse: "True / False",
+    gapfill: "Gap Fill",
+  };  
+
   /* ===== SUBMIT (ENG TO‘G‘RI VARIANT) ===== */
   const submit = async () => {
     if (submitted) return;
@@ -93,13 +104,20 @@ export default function TakeExam() {
     }
   };
 
-  if (!exam) return <p>Yuklanmoqda...</p>;
+  if (!exam) {
+    return (
+      <div className="loader-wrapper">
+        <ClipLoader color="#2d5bff" size={55}/>
+        <p>Yuklanmoqda...</p>
+      </div>
+    )
+  };
 
   return (
     <div className="take-container">
       {!started && (
-        <div className="modal-overlay">
-          <div className="modal-box">
+        <div className="start-modal-overlay">
+          <div className="start-modal">
             <h2>Imtihonni boshlaysizmi?</h2>
             <p>Vaqt: {exam.timeLimit} daqiqa</p>
 
@@ -126,7 +144,7 @@ export default function TakeExam() {
       {started && (
         <>
           <div className="exam-header">
-            <h2>{exam.title}</h2>
+            <h2 className="exam-title">{exam.title}</h2>
             <div className="timer">
               ⏰ {String(Math.floor(timeLeft / 60)).padStart(2, "0")}:
               {String(timeLeft % 60).padStart(2, "0")}
@@ -135,37 +153,55 @@ export default function TakeExam() {
 
           {/* ===== LISTENING TF ===== */}
           {exam.listeningTF?.map((q, i) => (
-            <section key={q._id} className="block">
-              <h3>Listening TF {i + 1}</h3>
-              <p>{q.statement || q.text}</p>
-              <Select
-                styles={customSelectStyles}
-                options={[
-                  { value: "true", label: "True" },
-                  { value: "false", label: "False" },
-                ]}
-                onChange={(e) => setAns(q._id, e.value)}
-              />
-            </section>
-          ))}
+  <section key={q._id} className="block">
+    <span className="question-type">
+      {QUESTION_TITLES.listeningTF}
+    </span>
+
+    <p className="question-text">
+      {i + 1}. {q.statement || q.text}
+    </p>
+
+    <Select
+      styles={customSelectStyles}
+      options={[
+        { value: "true", label: "True" },
+        { value: "false", label: "False" },
+      ]}
+      onChange={(e) => setAns(q._id, e.value)}
+    />
+  </section>
+))}
 
           {/* ===== LISTENING GAP ===== */}
           {exam.listeningGaps?.map((q, i) => (
-            <section key={q._id} className="block">
-              <h3>Listening Gap {i + 1}</h3>
-              <p>{q.sentence || q.text}</p>
-              <input onChange={(e) => setAns(q._id, e.target.value)} />
-            </section>
-          ))}
+  <section key={q._id} className="block">
+      <span className="question-type">{QUESTION_TITLES.listeningGap}</span>
+
+    <p>{i + 1}. {q.sentence || q.text}</p>
+
+    <input
+      placeholder="Javobingiz"
+      onChange={(e) => setAns(q._id, e.target.value)}
+    />
+  </section>
+))}
 
           {/* ===== GRAMMAR ===== */}
           {exam.grammarQuestions?.map((q, i) => (
-            <section key={q._id} className="block">
-              <h3>Grammar {i + 1}</h3>
-              <p>{q.scrambledWords || q.question}</p>
-              <input onChange={(e) => setAns(q._id, e.target.value)} />
-            </section>
-          ))}
+  <section key={q._id} className="block">
+    <span className="question-type">
+      {QUESTION_TITLES.grammar}
+    </span>
+
+    <p className="question-text">
+      {i + 1}. {q.scrambledWords || q.question}
+    </p>
+
+    <input onChange={(e) => setAns(q._id, e.target.value)} />
+  </section>
+))}
+
 
           {/* ===== TENSE (ENG MUHIM JOY) ===== */}
           {exam.tenseTransforms?.map((t, i) => (
@@ -185,33 +221,98 @@ export default function TakeExam() {
 
           {/* ===== BASIC QUESTIONS ===== */}
           {exam.questions?.map((q, i) => (
-            <section key={q._id} className="block">
-              <h3>{i + 1}. {q.questionText || q.question || q.text}</h3>
+  <section key={q._id} className="block">
+    <span className="question-type">
+      {QUESTION_TITLES[q.type]}
+    </span>
 
-              {q.type === "mcq" && (
-                <Select
-                  styles={customSelectStyles}
-                  options={q.options.map((o) => ({ value: o, label: o }))}
-                  onChange={(e) => setAns(q._id, e.value)}
-                />
-              )}
+    <p className="question-text">
+      {i + 1}. {q.questionText || q.question || q.text}
+    </p>
 
-              {q.type === "truefalse" && (
-                <Select
-                  styles={customSelectStyles}
-                  options={[
-                    { value: "true", label: "True" },
-                    { value: "false", label: "False" },
-                  ]}
-                  onChange={(e) => setAns(q._id, e.value)}
-                />
-              )}
+    {q.type === "mcq" && (
+      <Select
+        styles={customSelectStyles}
+        options={q.options.map((o) => ({ value: o, label: o }))}
+        onChange={(e) => setAns(q._id, e.value)}
+      />
+    )}
 
-              {q.type === "gapfill" && (
-                <input onChange={(e) => setAns(q._id, e.target.value)} />
-              )}
-            </section>
-          ))}
+    {q.type === "truefalse" && (
+      <Select
+        styles={customSelectStyles}
+        options={[
+          { value: "true", label: "True" },
+          { value: "false", label: "False" },
+        ]}
+        onChange={(e) => setAns(q._id, e.value)}
+      />
+    )}
+
+    {q.type === "gapfill" && (
+      <input onChange={(e) => setAns(q._id, e.target.value)} />
+    )}
+  </section>
+))}
+
+
+                    {/* ===== READING ===== */}
+{exam.reading && (
+  <section className="block">
+    <h2>Reading</h2>
+
+    <p><b>Topshiriq:</b> {exam.reading.instruction}</p>
+
+    <div className="reading-passage">
+      {exam.reading.passage}
+    </div>
+
+    {/* === TF / NOT GIVEN === */}
+    {exam.reading.tfQuestions?.length > 0 && (
+      <>
+        <h3>True / False / Not Given</h3>
+
+        {exam.reading.tfQuestions.map((q, i) => (
+          <div key={i} className="reading-question">
+            <p>{i + 1}. {q.statement}</p>
+
+            <Select
+              styles={customSelectStyles}
+              options={[
+                { value: "true", label: "True" },
+                { value: "false", label: "False" },
+                { value: "not_given", label: "Not Given" },
+              ]}
+              onChange={(e) =>
+                setAns(q._id, e.value)
+              }
+            />
+          </div>
+        ))}
+      </>
+    )}
+
+    {/* === GAP FILL === */}
+    {exam.reading.gapQuestions?.length > 0 && (
+      <>
+        <h3>Gap Fill</h3>
+
+        {exam.reading.gapQuestions.map((q, i) => (
+          <div key={i} className="reading-question">
+            <p>{i + 1}. {q.sentence}</p>
+
+            <input
+              placeholder="Javobingiz"
+              onChange={(e) =>
+                setAns(q._id, e.target.value)
+              }
+            />
+          </div>
+        ))}
+      </>
+    )}
+  </section>
+)}
 
           <button className="submit-btn" onClick={submit}>
             Imtihonni yuborish

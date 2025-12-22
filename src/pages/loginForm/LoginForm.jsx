@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./LoginForm.css";
 
 export default function LoginForm({ setRole }) {
@@ -16,7 +17,7 @@ export default function LoginForm({ setRole }) {
       navigate("/");
     }
     else {
-      alert("Noto‘g‘ri parol!");
+      toast.error("Parol noto'g'ri!");
     }
   };
 

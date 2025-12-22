@@ -85,4 +85,54 @@
       font-size: 14px;
     }
   }
-  
+
+  /* ===== READING SECTION ===== */
+.reading-passage {
+  width: 100%;
+  min-height: 220px;
+
+  padding: 16px 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  font-size: 16px;
+  line-height: 1.7;
+  font-family: "Segoe UI", Arial, sans-serif;
+
+  background-color: #f9fafb;
+  color: #222;
+
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+
+  white-space: pre-line;   /* ENTER lar saqlanadi */
+  overflow-y: auto;
+
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover / focus effect */
+.reading-passage:hover {
+  border-color: #2563eb;
+}
+
+/* ===== READING TITLE ===== */
+.exam-detail h3 {
+  margin-top: 30px;
+  color: #1f2937;
+}
+
+/* ===== READING TASK TEXT ===== */
+.exam-detail p b {
+  color: #111827;
+}
+
+@media (max-width: 600px) {
+  .reading-passage {
+    height: 200px;
+    max-height: 200px;
+    font-size: 15px;
+  }
+}

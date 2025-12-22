@@ -20,6 +20,7 @@ export default function TeacherPanel() {
 
   useEffect(() => {
     fetchExams();
+    fetchStats();
   }, []);
 
   const fetchExams = async () => {
@@ -167,7 +168,7 @@ export default function TeacherPanel() {
   };
 
   const fetchStats = async (examId) => {
-    const res = await api.get(`/results/stats/${examId}`);
+    const res = await api.get(`/results/stats`);
     setStats(res.data);
   };
 

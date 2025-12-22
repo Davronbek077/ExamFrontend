@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import "./TeacherPanel.css";
 
 export default function TeacherPanel() {
@@ -17,6 +19,13 @@ export default function TeacherPanel() {
   const [listeningGaps, setListeningGaps] = useState([]);
 
   const [stats, setStats] = useState(null);
+  const [reading, setReading] = useState({
+    instruction: "",
+    passage: "",
+    tfQuestions: [],
+    gapQuestions: [],
+    pointsPerQuestion: 1
+  });
 
   useEffect(() => {
     fetchExams();
@@ -56,6 +65,16 @@ export default function TeacherPanel() {
     }
 
     setQuestions(qCopy);
+  };
+
+  const addReadingTF = () => {
+    setReading({
+      ...reading,
+      tfQuestions: [
+        ...reading.tfQuestions,
+        {statement: "", correct: "true"}
+      ]
+    });
   };
 
   const toggleTense = (qIndex, tenseName) => {
@@ -103,6 +122,15 @@ export default function TeacherPanel() {
     setListeningGaps(c);
   };
 
+  const addReadingGap = () => {
+    setReading({
+      ...reading,
+      gapQuestions: [
+        ...reading.gapQuestions,
+        {sentence: "", correctWord: ""}
+      ]
+    });
+  };
 
   const createExam = async () => {
     if (!title) return alert("Imtihon nomini kiriting");
@@ -155,14 +183,15 @@ export default function TeacherPanel() {
         grammarQuestions: grammarArr,
         tenseTransforms: tenseArr,
         listeningTF,
-        listeningGaps
+        listeningGaps,
+        reading
       });
   
-      alert("Imtihon yaratildi!");
+      toast.success("Imtihon yaratildi!");
       fetchExams();
     } catch (err) {
       console.error(err);
-      alert("Xatolik yuz berdi!");
+      toast.error("Xatolik yuz berdi!");
     }
   };
 
@@ -173,6 +202,9 @@ export default function TeacherPanel() {
 
   return (
     <div className="teacher-container">
+      <button className="back-btn" onClick={() => navigate(-1)}>
+      <MdOutlineKeyboardBackspace className="back-icon" /> Back
+      </button>
       <h2>Teacher Panel</h2>
 
       {/* CREATE EXAM */}
@@ -206,7 +238,7 @@ export default function TeacherPanel() {
           <div key={i} className="list-item">
             <input
               type="text"
-              placeholder="Statement"
+              placeholder="Savol matni"
               value={item.statement}
               onChange={(e) => updateListeningTF(i, "statement", e.target.value)}
             />
@@ -256,10 +288,10 @@ export default function TeacherPanel() {
               value={q.type}
               onChange={(e) => updateQuestion(i, "type", e.target.value)}
             >
-              <option value="mcq">Choose correct option</option>
-              <option value="truefalse">True/False</option>
-              <option value="gapfill">complete the sentence</option>
-              <option value="grammar">Grammar</option>
+              <option value="mcq">Multiple Choice (Choose one)</option>
+              <option value="truefalse">True / False</option>
+              <option value="gapfill">Fill in the Blank</option>
+              <option value="grammar">Grammar Correction</option>
               <option value="tense">Tense Transformation</option>
             </select>
 
@@ -364,8 +396,95 @@ export default function TeacherPanel() {
           </div>
         ))}
 
+<button className="addQuestion-btn" onClick={addQuestion}>Savol qo‘shish</button>
+
+                    {/* ================= READING SECTION ================= */}
+<div className="reading-section">
+  <h3>Reading</h3>
+
+  {/* Instruction */}
+  <input
+    type="text"
+    placeholder="Reading bo‘yicha topshiriq"
+    value={reading.instruction}
+    onChange={e =>
+      setReading({ ...reading, instruction: e.target.value })
+    }
+  />
+
+  {/* Passage */}
+  <textarea
+    rows={8}
+    placeholder="Reading matni"
+    value={reading.passage}
+    onChange={e =>
+      setReading({ ...reading, passage: e.target.value })
+    }
+  />
+
+  {/* TF / NG */}
+  <h4>True / False / Not Given</h4>
+
+  {reading.tfQuestions.map((q, i) => (
+    <div key={i} className="reading-item">
+      <input
+        placeholder="Savol matni"
+        value={q.statement}
+        onChange={e => {
+          const arr = [...reading.tfQuestions];
+          arr[i].statement = e.target.value;
+          setReading({ ...reading, tfQuestions: arr });
+        }}
+      />
+
+      <select
+        value={q.correct}
+        onChange={e => {
+          const arr = [...reading.tfQuestions];
+          arr[i].correct = e.target.value;
+          setReading({ ...reading, tfQuestions: arr });
+        }}
+      >
+        <option value="true">True</option>
+        <option value="false">False</option>
+        <option value="not_given">Not Given</option>
+      </select>
+    </div>
+  ))}
+
+  <button onClick={addReadingTF}>+ TF/NG qo‘shish</button>
+
+  {/* GAP FILL */}
+  <h4>Gap fill</h4>
+
+  {reading.gapQuestions.map((q, i) => (
+    <div key={i} className="reading-item">
+      <input
+        placeholder="Gap (______ bilan)"
+        value={q.sentence}
+        onChange={e => {
+          const arr = [...reading.gapQuestions];
+          arr[i].sentence = e.target.value;
+          setReading({ ...reading, gapQuestions: arr });
+        }}
+      />
+
+      <input
+        placeholder="To‘g‘ri so‘z"
+        value={q.correctWord}
+        onChange={e => {
+          const arr = [...reading.gapQuestions];
+          arr[i].correctWord = e.target.value;
+          setReading({ ...reading, gapQuestions: arr });
+        }}
+      />
+    </div>
+  ))}
+
+  <button id="gap-add" onClick={addReadingGap}>+ Gap qo‘shish</button>
+</div>
+
         <div className="createExam-btn">
-        <button onClick={addQuestion}>Savol qo‘shish</button>
         <button onClick={createExam}>Imtihon yaratish</button>
         </div>
       </div>
