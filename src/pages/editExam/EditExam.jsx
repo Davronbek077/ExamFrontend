@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 import "./EditExam.css";
 
 export default function EditExam() {
@@ -115,11 +116,11 @@ export default function EditExam() {
         reading: form.reading
       });
   
-      alert("✅ Saqlandi");
+      toast.success("Ma'lumotlar saqlandi");
       navigate("/exams");
     } catch (err) {
       console.error(err.response?.data || err);
-      alert("❌ Saqlashda xato");
+      toast.error("Saqlashda xato!");
       console.log(err.response?.data);
     }
   };
