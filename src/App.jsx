@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import { api } from "./api/api";
 
 import LoginForm from "./pages/loginForm/LoginForm";
 import StudentPanel from "./pages/student/StudentPanel";
@@ -15,6 +17,11 @@ import EditExam from "./pages/editExam/EditExam";
 import Navbar from "./components/navbar/Navbar";
 
 function App() {
+
+  useEffect(() => {
+    api.get("/ping").catch(() => {});
+  }, []);
+
   const [role, setRole] = useState(null);
   const location = useLocation(); // ✅ endi to‘g‘ri
 
