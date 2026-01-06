@@ -28,7 +28,7 @@ export default function ExamDetail() {
 
   const reading = Array.isArray(exam.reading)
   ? exam.reading[0]
-  : exam.reading;
+  : exam.reading || null;
 
   return (
     <div className="exam-detail">
@@ -117,6 +117,59 @@ export default function ExamDetail() {
         </>
       )}
 
+{exam.completeQuestions?.length > 0 && (
+  <>
+    <hr />
+    <h3>🧩 Complete (Word Box)</h3>
+
+    {exam.completeQuestions.map((block, i) => (
+      <div key={i} className="question-card">
+        <p><b>Word box:</b></p>
+        <div className="word-box">
+          {block.wordBank.map((w, wi) => (
+            <span key={wi} className="word-chip">{w}</span>
+          ))}
+        </div>
+
+        {block.sentences.map((s, j) => (
+          <div key={j} className="sentence-block">
+            <p>{j + 1}) {s.text}</p>
+            <p className="correct">✔ To‘g‘ri javob: {s.correctWord}</p>
+          </div>
+        ))}
+      </div>
+    ))}
+  </>
+)}
+
+{exam.translateQuestions?.length > 0 && (
+  <>
+  <hr />
+  <h3>Translate</h3>
+
+  {exam.translateQuestions.map((q, i) => (
+    <div key={i} className="question-card">
+      <p><b>{i + 1}) Tarjima qiling:</b> {q.word}</p>
+      <p className="correct">✔ To'g'ri javob: {q.correctAnswer}</p>
+    </div>
+  ))}
+  </>
+)}
+
+{exam.correctionQuestions?.length > 0 && (
+  <>
+  <hr />
+  <h3>Correction</h3>
+
+  {exam.correctionQuestions.map((q, i) => (
+    <div key={i} className="question-card">
+      <p><b>{i + 1}) Xato gap:</b> {q.wrongSentence}</p>
+      <p className="correct">✔ To'g'ri variant: {q.correctSentence}</p>
+    </div>
+  ))}
+  </>
+)}
+
 {reading && (
   <>
     <hr />
@@ -150,6 +203,67 @@ export default function ExamDetail() {
         <p className="correct">✔ {q.correctWord}</p>
       </div>
     ))}
+  </>
+)}
+
+{Array.isArray(reading?.shortAnswerQuestions) &&
+  reading.shortAnswerQuestions.length > 0 && (
+    <>
+      <h4>Short Answer Questions</h4>
+
+      {reading.shortAnswerQuestions.map((block, bi) => (
+        <div key={bi} className="question-card">
+
+          <p>
+            <b>Keywords:</b>{" "}
+            {Array.isArray(block.keywords)
+              ? block.keywords.join(", ")
+              : block.keywords || "—"}
+          </p>
+
+          <p>
+            <b>Max ball:</b> {block.points ?? 2}
+          </p>
+
+          <hr />
+
+          {Array.isArray(block.questions) &&
+            block.questions.map((q, qi) => (
+              <div key={qi} className="short-answer-question">
+                <p>
+                  <b>{qi + 1})</b> {q.question}
+                </p>
+              </div>
+            ))}
+        </div>
+      ))}
+    </>
+)}
+
+{exam.writingTask && (
+  <>
+    <hr />
+    <h3>✍️ Writing</h3>
+
+    <p>
+      <b>Sarlavha:</b>{" "}
+      {exam.writingTask.title || "—"}
+    </p>
+
+    <p>
+      <b>Topshiriq:</b>{" "}
+      {exam.writingTask.instruction || "Topshiriq berilmagan"}
+    </p>
+
+    <p>
+      <b>So‘zlar:</b>{" "}
+      {exam.writingTask.minWords || 0} – {exam.writingTask.maxWords || 0}
+    </p>
+
+    <p>
+      <b>Maksimal ball:</b>{" "}
+      {exam.writingTask.points || 0}
+    </p>
   </>
 )}
 

@@ -58,9 +58,28 @@ export default function Stats() {
       <td className="col-name" data-label="Ism">{r.studentName}</td>
       <td data-label="Foiz">{r.percentage}%</td>
       <td data-label="Holat">
-  <span className={r.passed ? "status-pass" : "status-fail"}>
-    {r.passed ? "O‘tdi" : "Yiqildi"}
-  </span>
+        <span
+        className={
+          r.status === "passed"
+          ? "status-pass"
+          : r.status === "failed"
+          ? "status-fail"
+          : "status-pending"
+        }
+        >
+          {r.status ==="passed"
+          ? "O'tdi"
+          : r.status === "failed"
+          ? "Yiqildi"
+          : "Tekshirilmoqda"
+          }
+
+          {r.writingChecked && (
+            <span className="writing-inline">
+              {" "} (Writing {r.writingScore} / {r.writingMax})
+            </span>
+          )}
+          </span>
 </td>
       <td data-label="Sana">
         {new Date(r.createdAt).toLocaleString()}

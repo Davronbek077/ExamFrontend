@@ -15,6 +15,8 @@ import ExamsList from "./pages/teacher/ExamList";
 import TakeExam from "./pages/TakeExam/TakeExam";
 import EditExam from "./pages/editExam/EditExam";
 import Navbar from "./components/navbar/Navbar";
+import WritingList from "./pages/teacher/WritingList";
+import WritingCheck from "./pages/teacher/WritingCheck";
 
 function App() {
 
@@ -50,6 +52,9 @@ function App() {
             <Route path="/stats/:id" element={<Stats />} />
             <Route path="/exam/:id" element={<ExamDetail />} />
             <Route path="/exams/edit/:id" element={<EditExam />} />
+            <Route path="/teacher/writings" element={<WritingList />} />
+            <Route path="/teacher/writings/:id" element={<WritingCheck />} />
+
           </>
         )}
 

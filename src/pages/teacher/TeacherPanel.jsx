@@ -63,6 +63,10 @@ export default function TeacherPanel() {
       <button onClick={() => navigate("/teacher/exams")}>
         Imtihonlar ro‘yxati
       </button>
+
+      <button onClick={() => navigate("/teacher/writings")}>
+        Writing tekshirish
+      </button>
     </div>
   </div>
     </div>

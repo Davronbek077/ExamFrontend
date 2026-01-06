@@ -594,6 +594,8 @@ body {
   font-size: 22px;
   font-weight: 600;
   color: #1f2937;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
 }
 
 .reading-section h4 {
@@ -617,7 +619,6 @@ body {
 }
 
 .reading-section textarea {
-  resize: vertical;
   line-height: 1.5;
   resize: none;
 }
@@ -761,4 +762,463 @@ body {
   background-color: rgb(41, 41, 241);
   color: white;
   transform: translateX(-3px);
+}
+
+.writing-list {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.writing-list h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* CARD */
+.writing-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.writing-card h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #222;
+}
+
+.writing-card p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* BADGES */
+.badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge.checked {
+  background: #d4edda;
+  color: #155724;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .writing-card {
+    padding: 14px;
+  }
+
+  .writing-card h4 {
+    font-size: 16px;
+  }
+}
+
+.writing-check {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.writing-check h2 {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 24px;
+  color: #333;
+}
+
+.writing-check p {
+  margin: 6px 0;
+  color: #444;
+  font-size: 15px;
+}
+
+.writing-check b {
+  color: #000;
+}
+
+/* TEXTAREA */
+.writing-check textarea {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  resize: none;
+  background: #f9f9f9;
+  line-height: 1.6;
+}
+
+/* SCORE INPUT */
+.writing-check input[type="number"] {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+}
+
+.writing-check input[type="number"]:focus {
+  border-color: #ff9800;
+}
+
+/* BUTTON */
+.writingCheck-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 14px;
+  background: #ff9800;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.writing-check button:hover {
+  background: #e68900;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .writing-check {
+    padding: 16px;
+  }
+
+  .writing-check h2 {
+    font-size: 20px;
+  }
+}
+
+.writing-section {
+  background: #f9fafb;
+  padding: 22px;
+  border-radius: 12px;
+  margin-top: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.writing-section h3 {
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #2c2c2c;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
+}
+
+.writing-section h4 {
+  font-size: 18px;
+  padding-bottom: 10px;
+}
+
+.writing-section p {
+  padding-bottom: 10px;
+}
+
+/* INPUTS */
+.writing-section input,
+.writing-section textarea {
+  width: 100%;
+  padding: 14px 15px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+  background: white;
+}
+
+.writing-section textarea {
+  resize: none;
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+/* FOCUS */
+.writing-section input:focus,
+.writing-section textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 1px 0 #3b82f6;
+  background: #fff;
+}
+
+/* NUMBER INPUT */
+.writing-section input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.writing-section input[type="number"]::-webkit-outer-spin-button,
+.writing-section input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* GRID FOR NUMBERS */
+.writing-section .number-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .writing-section {
+    padding: 16px;
+  }
+
+  .writing-section h3 {
+    font-size: 20px;
+  }
+
+  .writing-section .number-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .menu-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .menu-buttons button {
+    width: 100%;
+  }
+}
+
+.add-writing-btn, .add-reading-btn{
+  width: 100%;
+  background-color: #19ca48 !important;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.add-reading-btn{
+  margin-top: 35px !important;
+}
+
+.complete-builder {
+  background: #f9faff;
+  border: 1px solid #dbe3ff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.complete-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #2d5bff;
+}
+
+.complete-wordbox {
+  width: 100%;
+  min-height: 70px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cdd7ff;
+  resize: vertical;
+  font-size: 14px;
+  margin-bottom: 14px;
+  resize: none;
+}
+
+.complete-wordbox:focus {
+  outline: none;
+  border-color: #2d5bff;
+}
+
+.complete-sentences {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.complete-sentence {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+}
+
+.complete-text,
+.complete-answer {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd6ff;
+  font-size: 14px;
+}
+
+.complete-text:focus,
+.complete-answer:focus {
+  outline: none;
+  border-color: #2d5bff;
+}
+
+.complete-add-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #3b82f6 !important;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 20px;
+}
+
+.complete-add-btn:hover {
+  background: #2048d8;
+}
+
+@media screen and (max-width: 450px) {
+  .complete-sentence{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= SHORT ANSWER DESIGN ================= */
+
+.reading-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f9fafc;
+  border-radius: 10px;
+}
+
+.reading-section h4 {
+  margin-top: 25px;
+  font-size: 18px;
+  color: #1f2937;
+}
+
+/* HAR BIR SHORT ANSWER BLOCK */
+.reading-section .reading-item {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.reading-section .reading-item > div{
+  display: flex;
+  flex-direction: column;
+}
+
+/* Block sarlavhasi */
+.reading-section .reading-item h5 {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #2563eb;
+}
+
+/* KEYWORDS textarea */
+.reading-section .reading-item textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  resize: none;
+  margin-bottom: 6px;
+  font-size: 14px;
+
+}
+
+/* 50% / 100% info */
+.reading-section .reading-item small {
+  display: block;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+/* SAVOL INPUTLAR */
+.reading-section .reading-item input {
+  width: 100%;
+  padding: 9px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+/* Savol + delete */
+.reading-section .reading-item > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* DELETE tugma */
+.reading-section .reading-item button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.reading-section .reading-item button:hover {
+  background: #1d4ed8;
+}
+
+/* DELETE uchun qizil */
+.reading-section .reading-item > div button {
+  background: #ef4444;
+}
+
+.reading-section .reading-item > div button:hover {
+  background: #dc2626;
+}
+
+/* BLOCK QO‘SHISH */
+.reading-section > button {
+  margin-top: 10px;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reading-section > button:hover {
+  background: #059669;
 }

@@ -287,3 +287,43 @@
 .reading-question{
   margin-bottom: 18px;
 }
+
+.reading-short-answer {
+  margin-top: 30px;
+}
+
+.short-answer-item {
+  margin-bottom: 20px;
+}
+
+.short-answer-item textarea {
+  width: 100%;
+  padding: 8px;
+}
+
+/* ===== SHORT ANSWER ===== */
+.short-answer-item {
+  margin-top: 14px;
+}
+
+.short-answer-item p {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.short-answer-item textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1.5px solid #d0d7ff;
+  outline: none;
+  resize: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.short-answer-item textarea:focus {
+  border-color: #2d5bff;
+  box-shadow: 0 0 0 2px rgba(45, 91, 255, 0.15);
+}

@@ -75,7 +75,8 @@
   margin-top: 5px;
 }
 
-.editAddQuedtion-btn, .listeningGap-add-btn, .listeningTF-add-btn, 
+.editAddQuedtion-btn, .addQuestion-btn,
+.listeningGap-add-btn, .reading-completeAdd-btn, .listeningTF-add-btn, 
 .readingGap-add-btn, .readingTF-add-btn{
   width: 100%;
   background-color: #19ca48 !important;
@@ -99,7 +100,7 @@
 .listening-gap-card button,
 .listteningTF-delete {
   background: #fee2e2;
-  color: #b91c1c !important;
+  color: #b91c1c;
 }
 
 .question-edit-card button:hover,
@@ -234,4 +235,17 @@
   background-color: rgb(41, 41, 241) !important;
   color: white !important;
   transform: translateX(-3px);
+}
+
+.shortAnswer-Add-btn{
+  width: 100%;
+  background-color: #19ca48 !important;
+  color: white !important;
+}
+
+ .shortAnswer-delete-btn, .listeningDelete-btn, .removeQuestion-btn, 
+.readingTF-delete-btn, .readingGap-delete-btn{
+  width: 100%;
+  background-color: #ca6319 !important;
+  color: white !important;
 }

@@ -27,8 +27,11 @@ export default function TakeExam() {
   const [submitted, setSubmitted] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [studentName, setStudentName] = useState("");
+  const [writingText, setWritingText] = useState("");
 
   const timerRef = useRef(null);
+  const answersRef = useRef({});
+  const submittingRef = useRef(false);
 
   /* ===== LOAD EXAM ===== */
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function TakeExam() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          submit();
+          submit(true);
           return 0;
         }
         return prev - 1;
@@ -58,6 +61,8 @@ export default function TakeExam() {
 
   /* ===== ANSWER HANDLER (ASOSIY NUQTA) ===== */
   const setAns = (questionId, value) => {
+    answersRef.current[questionId] = value;
+
     setAnswers((prev) => ({
       ...prev,
       [questionId]: value,
@@ -75,34 +80,52 @@ export default function TakeExam() {
   };  
 
   /* ===== SUBMIT (ENG TO‘G‘RI VARIANT) ===== */
-  const submit = async () => {
-    if (submitted) return;
-    setSubmitted(true);
-
+  const submit = async (force = false) => {
+    if (submitted || submittingRef.current) return;
+  
+    submittingRef.current = true;
+  
     try {
-      const formattedAnswers = Object.entries(answers).map(
+      if (!studentName.trim()) {
+        toast.error("Ismingizni kiriting");
+        submittingRef.current = false;
+        return;
+      }
+  
+      const formattedAnswers = Object.entries(answersRef.current).map(
         ([questionId, answer]) => ({
           questionId,
           answer: answer ?? "",
         })
       );
-
+  
       const res = await api.post("/results/submit", {
         examId: id,
         studentName,
         answers: formattedAnswers,
+        writingText,
+        autoSubmitted: force,
       });
 
+      console.log("ANSWERS SENT:", formattedAnswers);
+  
+      setSubmitted(true);
       clearInterval(timerRef.current);
+  
       setResult(res.data.result || res.data);
       setShowResultModal(true);
-      
+  
     } catch (err) {
-      console.error("SUBMIT ERROR FULL:", err);
-      console.error("SERVER RESPONSE:", err.response?.data);
-      alert(err.response?.data?.message || err.response?.data?.error || "Xatolik yuz berdi");
+      console.error(err);
+      toast.error(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Xatolik yuz berdi"
+      );
+    } finally {
+      submittingRef.current = false;
     }
-  };
+  };  
 
   if (!exam) {
     return (
@@ -249,15 +272,77 @@ export default function TakeExam() {
       />
     )}
 
-    {q.type === "gapfill" && (
-      <input onChange={(e) => setAns(q._id, e.target.value)} />
-    )}
+{q.type === "gapfill" && (
+  <div className="question-block">
+    <p className="question-text">{q.questionText}</p>
+
+    <input
+      type="text"
+      className="answer-input"
+      placeholder="Javobni yozing"
+      onChange={(e) => setAns(q._id, e.target.value)}
+    />
+  </div>
+)}
+
   </section>
 ))}
 
+{exam.translateQuestions?.length > 0 && (
+  <>
+    <h3>Translate</h3>
+    {exam.translateQuestions.map((q, i) => (
+      <section key={q._id} className="block">
+        <p>{i + 1}. {q.word}</p>
+        <input
+          onChange={(e) => setAns(q._id, e.target.value)}
+        />
+      </section>
+    ))}
+  </>
+)}
 
+{exam.correctionQuestions?.length > 0 && (
+  <>
+    <h3>Correction</h3>
+    {exam.correctionQuestions.map((q, i) => (
+      <section key={q._id} className="block">
+        <p>{i + 1}. {q.wrongSentence}</p>
+        <input
+          onChange={(e) => setAns(q._id, e.target.value)}
+        />
+      </section>
+    ))}
+  </>
+)}
+
+{exam.completeQuestions?.length > 0 && (
+  <>
+    <h3>Complete</h3>
+    {exam.completeQuestions.map((block) => (
+      <section key={block._id} className="block">
+
+        <div className="word-box">
+          {block.wordBank.map((w, i) => (
+            <span key={i}>{w}</span>
+          ))}
+        </div>
+
+        {block.sentences.map((s) => (
+          <div key={s._id}>
+            <p>{s.text}</p>
+            <input
+              onChange={(e) => setAns(s._id, e.target.value)}
+            />
+          </div>
+        ))}
+
+      </section>
+    ))}
+  </>
+)}
                     {/* ===== READING ===== */}
-{exam.reading && (
+{exam.reading?.passage && (
   <section className="block">
     <h2>Reading</h2>
 
@@ -311,10 +396,56 @@ export default function TakeExam() {
         ))}
       </>
     )}
+
+    {/* ===== READING SHORT ANSWER (TO‘G‘RI) ===== */}
+{exam.reading.shortAnswerQuestions?.length > 0 && (
+  <>
+    <h3>Short Answer</h3>
+
+    {exam.reading.shortAnswerQuestions.map((q, i) => (
+      <div key={q._id} className="short-answer-item">
+        <p>{i + 1}. {q.question}</p>
+
+        <textarea
+          rows={3}
+          placeholder="Javobingizni yozing..."
+          onChange={(e) => setAns(q._id, e.target.value)}
+        />
+      </div>
+    ))}
+  </>
+)}
+
   </section>
 )}
 
-          <button className="submit-btn" onClick={submit}>
+{/* ===== WRITING SECTION ===== */}
+{exam?.writingTask?.title && (
+  <div className="writing-section">
+  <h3>Writing Task</h3>
+  {exam.writingTask.title && <h4>{exam.writingTask.title}</h4> }
+
+  {exam.writingTask.instruction && (
+    <p>{exam.writingTask.instruction}</p>
+  )}
+
+  {exam.writingTask.maxWords && <p><b>Maximal words:</b> {exam.writingTask.maxWords}</p> }
+  {exam.writingTask.minWords && <p><b>Minimal words:</b> {exam.writingTask.minWords}</p> }
+
+  <textarea
+    placeholder="Writing javobingizni shu yerga yozing..."
+    value={writingText}
+    onChange={(e) => setWritingText(e.target.value)}
+    rows={8}
+  />
+
+  <p>
+    So‘zlar soni: {writingText.trim().split(/\s+/).filter(Boolean).length}
+  </p>
+</div>
+)}
+
+          <button className="submit-btn" onClick={() => submit(false)}>
             Imtihonni yuborish
           </button>
         </>
@@ -325,12 +456,24 @@ export default function TakeExam() {
           <div className="result-modal">
             <h2>Natija</h2>
 
-            <p><b>Ball:</b> {result.score}</p>
-            <p><b>O'tish foizi</b> {result.percentage}%</p>
+            <p>Ball: <b>{result.autoScore}</b></p>
+            <p>Foiz: <b>{result.autoPercentage}%</b></p>
 
-            <h3 className={result.passed ? "pass" : "fail"}>
-              {result.passed ? "O'tdingiz!" : "O'tmadingiz!"}
-            </h3>
+            {result.autoPercentage >= exam.passPercentage ? (
+              <p style={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
+              O'tdingiz
+              </p>
+            ) : (
+              <p style={{ color: "red", fontWeight: "bold", fontSize: 18 }}>
+              Yiqildingiz
+              </p>
+            )}
+
+            {exam?.writingTask && (
+              <p style={{color: "orange"}}>
+              Writing tekshirilmoqda. Natija keyin elon qilinadi.
+            </p>
+            )}
 
             <div className="modal-actions">
               <button onClick={() => navigate("/")}>

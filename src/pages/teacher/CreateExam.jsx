@@ -13,6 +13,16 @@ export default function TeacherPanel() {
   const [timeLimit, setTimeLimit] = useState("");
   const [passPercentage, setPassPercentage] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [showWriting, setShowWriting] = useState(false);
+  const [showReading, setShowReading] = useState(false);
+
+  const [writingTask, setWritingTask] = useState({
+    title: "",
+    instruction: "",
+    minWords: "",
+    maxWords: "",
+    points: ""
+  });
 
   // LISTENING
   const [listeningTF, setListeningTF] = useState([]);
@@ -24,6 +34,7 @@ export default function TeacherPanel() {
     passage: "",
     tfQuestions: [],
     gapQuestions: [],
+    shortAnswerQuestions: [],
     pointsPerQuestion: 1
   });
 
@@ -42,18 +53,30 @@ export default function TeacherPanel() {
       ...questions,
       {
         type: "mcq",
+  
         questionText: "",
         options: ["", "", "", ""],
+        word: "",
         correctAnswer: "",
-        points: 1,
-        scrambledWords: "",
-        correctSentence: "",
-        baseSentence: "",
+  
+        wordBank: "",
+        sentences: [
+          {text: "", correctWord: ""}
+        ],
+        pointsPerSentence: 1,
+  
+        scrambledWords: "",    // grammar
+        wrongSentence: "",
+        correctSentence: "",   // grammar & correction
+        
+        baseSentence: "",      // tense
         tenses: [],
-        tenseAnswers: {}
+        tenseAnswers: {},
+  
+        points: 1
       }
     ]);
-  };
+  };  
 
   const updateQuestion = (index, field, value, optionIndex = null) => {
     const qCopy = [...questions];
@@ -132,6 +155,20 @@ export default function TeacherPanel() {
     });
   };
 
+  const addReadingShortAnswer = () => {
+    setReading({
+      ...reading,
+      shortAnswerQuestions: [
+        ...reading.shortAnswerQuestions,
+        {
+          question: "",
+          keywords: [],
+          maxPoints: 2
+        }
+      ]
+    });
+  };    
+
   const createExam = async () => {
     if (!title) return alert("Imtihon nomini kiriting");
   
@@ -174,6 +211,38 @@ export default function TeacherPanel() {
           ),
           points: 1
         }));
+
+        const completeArr = questions
+        .filter(q => q.type === "complete")
+        .map(q => ({
+          wordBank: q.wordBank.split(",").map(w => w.trim()),
+          sentences: q.sentences,
+          pointsPerSentence: q.pointsPerSentence || 1
+        }));
+
+        const translateQuestions = questions
+        .filter(q => q.type === "translate")
+        .map(q => ({
+          word: q.word,
+          correctAnswer: q.correctAnswer,
+          points: q.points || 1
+        }));
+
+        const correctionQuestions = questions
+        .filter(q => q.type === "correction")
+        .map(q => ({
+          wrongSentence: q.wrongSentence,
+          correctSentence: q.correctSentence,
+          points: q.points || 1
+        }));
+
+        const preparedWritingTask = {
+      ...writingTask,
+      minWords: Number(writingTask.minWords),
+      maxWords: Number(writingTask.maxWords),
+      points: Number(writingTask.points)
+    };
+
   
       await api.post("/exams/create", {
         title,
@@ -184,7 +253,11 @@ export default function TeacherPanel() {
         tenseTransforms: tenseArr,
         listeningTF,
         listeningGaps,
-        reading
+        ...(showReading && {reading}),
+        completeQuestions: completeArr,
+        ...(showWriting && {writingTask: preparedWritingTask}),
+        translateQuestions,
+        correctionQuestions
       });
   
       toast.success("Imtihon yaratildi!");
@@ -291,6 +364,9 @@ export default function TeacherPanel() {
               <option value="mcq">Multiple Choice (Choose one)</option>
               <option value="truefalse">True / False</option>
               <option value="gapfill">Fill in the Blank</option>
+              <option value="translate">Translate</option>
+              <option value="complete">Complete the sentence (Word box)</option>
+              <option value="correction">Correct the mistakes</option>
               <option value="grammar">Grammar Correction</option>
               <option value="tense">Tense Transformation</option>
             </select>
@@ -393,13 +469,111 @@ export default function TeacherPanel() {
                 ))}
               </>
             )}
+
+            {/* TRANSLATE */}
+            {q.type === "translate" && (
+              <>
+              <input placeholder="Tarjima qilinadigan gap" 
+              value={q.word}
+              onChange={e => updateQuestion(i, "word", e.target.value)}
+              />
+
+              <input placeholder="To'g'ri tarjima" 
+              value={q.correctAnswer}
+              onChange={e => updateQuestion(i, "correctAnswer", e.target.value)}
+              />
+              </>
+            )}
+
+            {/* COMPLETE */}
+            {q.type === "complete" && (
+  <div className="complete-builder">
+
+    <label className="complete-label">Word Box</label>
+    <textarea
+      className="complete-wordbox"
+      placeholder="Word box (vergul bilan yozing)"
+      value={q.wordBank}
+      onChange={e => updateQuestion(i, "wordBank", e.target.value)}
+    />
+
+    <div className="complete-sentences">
+      {q.sentences.map((s, si) => (
+        <div key={si} className="complete-sentence">
+
+          <input
+            className="complete-text"
+            placeholder="Gap (____ bilan)"
+            value={s.text}
+            onChange={e => {
+              const copy = [...questions];
+              copy[i].sentences[si].text = e.target.value;
+              setQuestions(copy);
+            }}
+          />
+
+          <input
+            className="complete-answer"
+            placeholder="To‘g‘ri so‘z"
+            value={s.correctWord}
+            onChange={e => {
+              const copy = [...questions];
+              copy[i].sentences[si].correctWord = e.target.value;
+              setQuestions(copy);
+            }}
+          />
+        </div>
+      ))}
+    </div>
+
+    <button
+      className="complete-add-btn"
+      onClick={() => {
+        const copy = [...questions];
+        copy[i].sentences.push({ text: "", correctWord: "" });
+        setQuestions(copy);
+      }}
+    >
+      + Gap qo‘shish
+    </button>
+
+  </div>
+)}
+
+
+            {/* CORRECTION */}
+            {q.type === "correction" && (
+              <>
+              <input placeholder="Xato gap" 
+              value={q.wrongSentence}
+              onChange={e => updateQuestion(i, "wrongSentence", e.target.value)}
+              />
+
+              <input placeholder="To'gri variant" 
+              value={q.correctSentence}
+              onChange={e => updateQuestion(i, "correctSentence", e.target.value)}
+              />
+              </>
+            )}
+            
           </div>
         ))}
 
 <button className="addQuestion-btn" onClick={addQuestion}>Savol qo‘shish</button>
 
+{!showReading && (
+  <button
+    className="add-reading-btn"
+    onClick={() => setShowReading(true)}
+  >
+    + Reading qo‘shish
+  </button>
+)}
+
                     {/* ================= READING SECTION ================= */}
-<div className="reading-section">
+
+{showReading && (
+  <div className="reading-section">
   <h3>Reading</h3>
 
   {/* Instruction */}
@@ -482,7 +656,121 @@ export default function TeacherPanel() {
   ))}
 
   <button id="gap-add" onClick={addReadingGap}>+ Gap qo‘shish</button>
+
+  {/* SHORT ANSWER */}
+  <h4>Short Answer</h4>
+
+  {reading.shortAnswerQuestions.map((q, i) => (
+  <div key={i} className="question-edit-card">
+
+    <input
+      placeholder="Short answer savol"
+      value={q.question}
+      onChange={e => {
+        const r = { ...reading };
+        r.shortAnswerQuestions[i].question = e.target.value;
+        setReading(r);
+      }}
+    />
+
+    <textarea
+      placeholder="Keywords (vergul bilan)"
+      value={q.keywords.join(", ")}
+      onChange={e => {
+        const r = { ...reading };
+        r.shortAnswerQuestions[i].keywords =
+          e.target.value
+            .split(",")
+            .map(k => k.trim().toLowerCase());
+        setReading(r);
+      }}
+    />
+
+    <small>50% = 1 ball | 100% = 2 ball</small>
+
+    <button
+      className="shortAnswer-delete-btn"
+      onClick={() => {
+        const r = { ...reading };
+        r.shortAnswerQuestions.splice(i, 1);
+        setReading(r);
+      }}
+    >
+      Delete
+    </button>
+
+  </div>
+))}
+
+<button onClick={addReadingShortAnswer}>
+  + Short Answer Block qo‘shish
+</button>
+
 </div>
+)}
+
+{!showWriting && (
+  <button className="add-writing-btn"
+  onClick={() => setShowWriting(true)}
+  >
+    + Writing qo'shish
+  </button>
+)}
+
+{/* ================= WRITING SECTION ================= */}
+{showWriting && (
+  <div className="writing-section">
+  <h3>Writing</h3>
+
+  <input
+    type="text"
+    placeholder="Writing sarlavhasi"
+    value={writingTask.title}
+    onChange={e =>
+      setWritingTask({ ...writingTask, title: e.target.value })
+    }
+  />
+
+  <textarea
+    rows={5}
+    placeholder="Writing topshirig‘i (instruction)"
+    value={writingTask.instruction}
+    onChange={e =>
+      setWritingTask({ ...writingTask, instruction: e.target.value })
+    }
+  />
+
+  <div className="number-grid">
+    <input
+      type="number"
+      placeholder="Minimal so‘zlar soni"
+      value={writingTask.minWords}
+      onChange={e =>
+        setWritingTask({ ...writingTask, minWords: e.target.value })
+      }
+    />
+
+    <input
+      type="number"
+      placeholder="Maksimal so‘zlar soni"
+      value={writingTask.maxWords}
+      onChange={e =>
+        setWritingTask({ ...writingTask, maxWords: e.target.value })
+      }
+    />
+  </div>
+
+  <input
+    type="number"
+    placeholder="Writing bali"
+    value={writingTask.points}
+    onChange={e =>
+      setWritingTask({ ...writingTask, points: e.target.value })
+    }
+  />
+</div>
+)}
+
 
         <div className="createExam-btn">
         <button onClick={createExam}>Imtihon yaratish</button>
