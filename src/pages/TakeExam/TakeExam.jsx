@@ -370,7 +370,7 @@ export default function TakeExam() {
 
 {exam.correctionQuestions?.length > 0 && (
   <>
-    <h3>Correction</h3>
+    <h3>Correct the mistakes</h3>
     {exam.correctionQuestions.map((q, i) => (
       <section key={q._id} className="block">
         <p>{i + 1}. {q.wrongSentence}</p>
