@@ -92,17 +92,27 @@ export default function TakeExam() {
         return;
       }
   
-      const formattedAnswers = Object.entries(answersRef.current).map(
-        ([questionId, answer]) => ({
-          questionId,
-          answer: answer ?? "",
-        })
-      );
+      const formattedAnswers = Object.entries(answersRef.current)
+  .filter(([_, v]) => typeof v !== "object") // 🔴 MUHIM
+  .map(([questionId, answer]) => ({
+    questionId,
+    answer: answer ?? "",
+  }));
+
+      const sentenceBuildAnswers = Object.entries(answersRef.current)
+  .filter(([_, v]) => typeof v === "object")
+  .map(([questionId, v]) => ({
+    questionId,
+    affirmative: v.affirmative || "",
+    negative: v.negative || "",
+    question: v.question || "",
+  }));
   
       const res = await api.post("/results/submit", {
         examId: id,
         studentName,
         answers: formattedAnswers,
+        sentenceBuildAnswers,
         writingText,
         autoSubmitted: force,
       });
@@ -302,6 +312,62 @@ export default function TakeExam() {
   </>
 )}
 
+{/* ===== SENTENCE BUILD ===== */}
+{exam.sentenceBuildQuestions?.length > 0 && (
+  <>
+    <h3>Grammar — Sentence Build</h3>
+
+    {exam.sentenceBuildQuestions.map((q, i) => (
+      <section key={q._id} className="block sentence-build-student">
+
+        <p className="question-text">
+          {i + 1}. So‘zlardan gap tuzing:
+        </p>
+
+        <div className="word-box">
+          {q.words.map((w, wi) => (
+            <span key={wi} className="word-chip">{w} {wi !== q.words.length - 1 && " / "}</span>
+          ))}
+        </div>
+
+        {/* AFFIRMATIVE */}
+        <input
+          placeholder="(+)"
+          onChange={(e) =>
+            setAns(q._id, {
+              ...(answersRef.current[q._id] || {}),
+              affirmative: e.target.value
+            })
+          }
+        />
+
+        {/* NEGATIVE */}
+        <input
+          placeholder="(-)"
+          onChange={(e) =>
+            setAns(q._id, {
+              ...(answersRef.current[q._id] || {}),
+              negative: e.target.value
+            })
+          }
+        />
+
+        {/* QUESTION */}
+        <input
+          placeholder="(?)"
+          onChange={(e) =>
+            setAns(q._id, {
+              ...(answersRef.current[q._id] || {}),
+              question: e.target.value
+            })
+          }
+        />
+
+      </section>
+    ))}
+  </>
+)}
+
 {exam.correctionQuestions?.length > 0 && (
   <>
     <h3>Correction</h3>
@@ -322,10 +388,10 @@ export default function TakeExam() {
     {exam.completeQuestions.map((block) => (
       <section key={block._id} className="block">
 
-        <div className="word-box">
-          {block.wordBank.map((w, i) => (
-            <span key={i}>{w}</span>
-          ))}
+        <div className="word-box complete-word-box">
+        {Array.isArray(block.wordBank)
+    ? block.wordBank.join(", ")
+    : "—"}
         </div>
 
         {block.sentences.map((s) => (
@@ -409,6 +475,23 @@ export default function TakeExam() {
         <textarea
           rows={3}
           placeholder="Javobingizni yozing..."
+          onChange={(e) => setAns(q._id, e.target.value)}
+        />
+      </div>
+    ))}
+  </>
+)}
+
+{exam.reading?.translationQuestions?.length > 0 && (
+  <>
+    <h3>Translation</h3>
+
+    {exam.reading.translationQuestions.map((q, i) => (
+      <div key={q._id} className="reading-translate">
+        <p><b>Translate:</b> {q.sentence}</p>
+
+        <input
+          placeholder="Tarjimani yozing"
           onChange={(e) => setAns(q._id, e.target.value)}
         />
       </div>

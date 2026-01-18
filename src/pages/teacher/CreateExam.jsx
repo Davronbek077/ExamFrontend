@@ -35,6 +35,7 @@ export default function TeacherPanel() {
     tfQuestions: [],
     gapQuestions: [],
     shortAnswerQuestions: [],
+    translationQuestions: [],
     pointsPerQuestion: 1
   });
 
@@ -68,6 +69,11 @@ export default function TeacherPanel() {
         scrambledWords: "",    // grammar
         wrongSentence: "",
         correctSentence: "",   // grammar & correction
+
+        sentenceWords: "",
+        affirmative: "",
+        negative: "",
+        questionForm: "",
         
         baseSentence: "",      // tense
         tenses: [],
@@ -167,7 +173,21 @@ export default function TeacherPanel() {
         }
       ]
     });
-  };    
+  };   
+  
+  const addReadingTranslation = () => {
+    setReading({
+      ...reading,
+      translationQuestions: [
+        ...reading.translationQuestions,
+        {
+          sentence: "",        // passage’dan olingan gap
+          correctAnswer: "",   // to‘g‘ri tarjima
+          points: 2
+        }
+      ]
+    });
+  };  
 
   const createExam = async () => {
     if (!title) return alert("Imtihon nomini kiriting");
@@ -243,7 +263,20 @@ export default function TeacherPanel() {
       points: Number(writingTask.points)
     };
 
-  
+    const sentenceBuildQuestions = questions
+  .filter(q =>
+    q.type === "sentenceBuild" &&
+    q.sentenceWords.trim()
+  )
+  .map(q => ({
+    words: q.sentenceWords.split("/").map(w => w.trim()),
+    affirmative: q.affirmative,
+    negative: q.negative,
+    question: q.questionForm,
+    points: q.points || 3
+  }));
+
+
       await api.post("/exams/create", {
         title,
         timeLimit,
@@ -251,6 +284,7 @@ export default function TeacherPanel() {
         questions: questionsArr,
         grammarQuestions: grammarArr,
         tenseTransforms: tenseArr,
+        sentenceBuildQuestions,
         listeningTF,
         listeningGaps,
         ...(showReading && {reading}),
@@ -368,6 +402,7 @@ export default function TeacherPanel() {
               <option value="complete">Complete the sentence (Word box)</option>
               <option value="correction">Correct the mistakes</option>
               <option value="grammar">Grammar Correction</option>
+              <option value="sentenceBuild">Grammar Sentence Build</option>
               <option value="tense">Tense Transformation</option>
             </select>
 
@@ -484,6 +519,46 @@ export default function TeacherPanel() {
               />
               </>
             )}
+
+            {/* SENTENCE BUILD */}
+{/* SENTENCE BUILD (TEACHER) */}
+{q.type === "sentenceBuild" && (
+  <div className="sentence-build">
+
+    <input
+      placeholder="Write a sentence"
+      value={q.sentenceWords}
+      onChange={e =>
+        updateQuestion(i, "sentenceWords", e.target.value)
+      }
+    />
+ 
+    <input
+      placeholder="(+)"
+      value={q.affirmative}
+      onChange={e =>
+        updateQuestion(i, "affirmative", e.target.value)
+      }
+    />
+
+    <input
+      placeholder="(-)"
+      value={q.negative}
+      onChange={e =>
+        updateQuestion(i, "negative", e.target.value)
+      }
+    />
+
+    <input
+      placeholder="(?)"
+      value={q.questionForm}
+      onChange={e =>
+        updateQuestion(i, "questionForm", e.target.value)
+      }
+    />
+
+  </div>
+)}
 
             {/* COMPLETE */}
             {q.type === "complete" && (
@@ -664,7 +739,7 @@ export default function TeacherPanel() {
   <div key={i} className="question-edit-card">
 
     <input
-      placeholder="Short answer savol"
+      placeholder="Savolni yozing"
       value={q.question}
       onChange={e => {
         const r = { ...reading };
@@ -704,6 +779,38 @@ export default function TeacherPanel() {
 
 <button onClick={addReadingShortAnswer}>
   + Short Answer Block qo‘shish
+</button>
+
+{/* TRANSLATION */}
+<h4>Translation (Reading)</h4>
+
+{reading.translationQuestions.map((q, i) => (
+  <div key={i} className="reading-item">
+
+    <input
+      placeholder="Tarjima qilinadigan gap"
+      value={q.sentence}
+      onChange={e => {
+        const arr = [...reading.translationQuestions];
+        arr[i].sentence = e.target.value;
+        setReading({ ...reading, translationQuestions: arr });
+      }}
+    />
+
+    <input
+      placeholder="To‘g‘ri tarjima"
+      value={q.correctAnswer}
+      onChange={e => {
+        const arr = [...reading.translationQuestions];
+        arr[i].correctAnswer = e.target.value;
+        setReading({ ...reading, translationQuestions: arr });
+      }}
+    />
+
+  </div>
+))}
+<button onClick={addReadingTranslation}>
+  + Translation savol qo‘shish
 </button>
 
 </div>

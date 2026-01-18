@@ -1222,3 +1222,7 @@ body {
 .reading-section > button:hover {
   background: #059669;
 }
+
+.question-edit-card{
+  margin-bottom: 20px;
+}

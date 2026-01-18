@@ -14,6 +14,14 @@ export default function ExamDetail() {
   const [exam, setExam] = useState(null);
 
   useEffect(() => {
+    api.get(`/exams/${id}`).then(res => {
+      console.log("FULL EXAM:", res.data);
+      console.log("READING RAW:", res.data.reading);
+      setExam(res.data);
+    });
+  }, [id]);  
+
+  useEffect(() => {
     api.get(`/exams/${id}`).then(res => setExam(res.data));
   }, [id]);
 
@@ -29,6 +37,7 @@ export default function ExamDetail() {
   const reading = Array.isArray(exam.reading)
   ? exam.reading[0]
   : exam.reading || null;
+
 
   return (
     <div className="exam-detail">
@@ -126,9 +135,10 @@ export default function ExamDetail() {
       <div key={i} className="question-card">
         <p><b>Word box:</b></p>
         <div className="word-box">
-          {block.wordBank.map((w, wi) => (
-            <span key={wi} className="word-chip">{w}</span>
-          ))}
+        <p><b>Keywords: </b>
+        {Array.isArray(block.wordBank)
+    ? block.wordBank.join(", ")
+    : "—"}</p>
         </div>
 
         {block.sentences.map((s, j) => (
@@ -159,7 +169,7 @@ export default function ExamDetail() {
 {exam.correctionQuestions?.length > 0 && (
   <>
   <hr />
-  <h3>Correction</h3>
+  <h3>Correct the mistakes</h3>
 
   {exam.correctionQuestions.map((q, i) => (
     <div key={i} className="question-card">
@@ -170,7 +180,46 @@ export default function ExamDetail() {
   </>
 )}
 
-{reading && (
+{exam.sentenceBuildQuestions?.length > 0 && (
+  <>
+    <hr />
+    <h3>Grammar — Sentence Build</h3>
+
+    {exam.sentenceBuildQuestions.map((q, i) => (
+      <div key={q._id} className="question-card">
+
+        <p><b>{i + 1}) So‘zlardan gap tuzing:</b></p>
+
+        <div className="word-box">
+          {q.words.map((w, wi) => (
+            <span key={wi} className="word-chip">{w} {wi !== q.words.length - 1 && " / "}</span>
+          ))}
+        </div>
+
+        <div className="sentence-build-answers">
+          <p className="correct">
+            ✔ Affirmative: {q.affirmative || "—"}
+          </p>
+
+          <p className="correct">
+            ✔ Negative: {q.negative || "—"}
+          </p>
+
+          <p className="correct">
+            ✔ Question: {q.question || "—"}
+          </p>
+        </div>
+
+        {q.points && (
+          <p><b>Ball:</b> {q.points}</p>
+        )}
+
+      </div>
+    ))}
+  </>
+)}
+
+{reading?.passage && (
   <>
     <hr />
     <h3>Reading</h3>
@@ -206,35 +255,47 @@ export default function ExamDetail() {
   </>
 )}
 
+{reading?.translationQuestions?.length > 0 && (
+  <>
+    <h4>Reading — Translate</h4>
+
+    {reading.translationQuestions.map((q, i) => (
+      <div key={i} className="question-card">
+        <p>
+          <b>{i + 1}) Tarjima qiling:</b> {q.sentence}
+        </p>
+        <p className="correct">
+          ✔ To‘g‘ri javob: {q.correctAnswer}
+        </p>
+      </div>
+    ))}
+  </>
+)}
+
+
 {Array.isArray(reading?.shortAnswerQuestions) &&
   reading.shortAnswerQuestions.length > 0 && (
     <>
       <h4>Short Answer Questions</h4>
 
-      {reading.shortAnswerQuestions.map((block, bi) => (
-        <div key={bi} className="question-card">
+      {reading.shortAnswerQuestions.map((q, i) => (
+        <div key={q._id || i} className="question-card">
+
+          <p>
+            <b>Question {i + 1})</b> {q.question}
+          </p>
 
           <p>
             <b>Keywords:</b>{" "}
-            {Array.isArray(block.keywords)
-              ? block.keywords.join(", ")
-              : block.keywords || "—"}
+            {Array.isArray(q.keywords)
+              ? q.keywords.join(", ")
+              : "—"}
           </p>
 
           <p>
-            <b>Max ball:</b> {block.points ?? 2}
+            <b>Max ball:</b> {q.maxPoints ?? 2}
           </p>
 
-          <hr />
-
-          {Array.isArray(block.questions) &&
-            block.questions.map((q, qi) => (
-              <div key={qi} className="short-answer-question">
-                <p>
-                  <b>{qi + 1})</b> {q.question}
-                </p>
-              </div>
-            ))}
         </div>
       ))}
     </>
@@ -243,7 +304,7 @@ export default function ExamDetail() {
 {exam.writingTask && (
   <>
     <hr />
-    <h3>✍️ Writing</h3>
+    <h3>Writing</h3>
 
     <p>
       <b>Sarlavha:</b>{" "}
