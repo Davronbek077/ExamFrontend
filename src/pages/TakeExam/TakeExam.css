@@ -17,6 +17,17 @@
   border-radius: 14px;
   margin-bottom: 25px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  position: sticky;
+  top: 65px;
+  z-index: 50;
+  transition:
+    background-color 0.25s ease,
+    padding 0.25s ease;
+}
+
+body:has(.exam-header.stuck) .exam-header{
+  background-color: white;
+  padding: 6px 22px;
 }
 
 .exam-header h2 {
@@ -102,12 +113,16 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .exam-header {
-    flex-direction: column;
     gap: 10px;
     text-align: center;
+    padding: 16px 16px; /* normal holat */
   }
 
   .timer {
+    font-size: 16px;
+  }
+
+  .exam-header h2{
     font-size: 16px;
   }
 
@@ -118,6 +133,22 @@
   .submit-btn {
     font-size: 16px;
     padding: 14px;
+  }
+
+  body:has(.exam-header.stuck) .exam-header {
+    padding: 4px 16px;  /* 👈 kichrayadi */
+  }
+
+  .exam-header h2 {
+    transition: font-size 0.25s ease;
+  }
+
+  body:has(.exam-header.stuck) .exam-header h2 {
+    font-size: 14px;
+  }
+
+  .timer {
+    padding: 6px 12px;
   }
 }
 

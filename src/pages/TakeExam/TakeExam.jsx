@@ -41,6 +41,16 @@ export default function TakeExam() {
     });
   }, [id]);
 
+  useEffect(() => {
+    const onScroll = () => {
+      document
+        .querySelector(".exam-header")
+        ?.classList.toggle("stuck", window.scrollY > 80); // 👈 shu yer
+    };
+  
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);  
   /* ===== TIMER ===== */
   useEffect(() => {
     if (!started || submitted) return;
