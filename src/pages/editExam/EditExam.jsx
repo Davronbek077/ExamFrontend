@@ -65,82 +65,101 @@ export default function EditExam() {
   };
 
   const addQuestionByType = (type) => {
-    const map = {
+
+    console.log("🟡 ADD QUESTION CLICKED");
+    console.log("➡️ TYPE:", type);
+    console.log("📦 BEFORE EXAM:", exam);
+    const questionTemplates = {
       mcq: {
-        questionText: "",
-        options: ["", "", "", ""],
-        correctAnswer: "",
-        points: 1
+        field: "questions",
+        data: {
+          questionText: "",
+          options: ["", "", "", ""],
+          correctAnswer: "",
+          points: 1
+        }
       },
   
       truefalse: {
-        questionText: "",
-        correctAnswer: "true",
-        points: 1
+        field: "questions",
+        data: {
+          questionText: "",
+          correctAnswer: "true",
+          points: 1
+        }
       },
   
       gapfill: {
-        questionText: "",
-        correctAnswer: "",
-        points: 1
+        field: "questions",
+        data: {
+          questionText: "",
+          correctAnswer: "",
+          points: 1
+        }
       },
   
       translate: {
-        word: "",
-        correctAnswer: "",
-        points: 1
+        field: "translateQuestions",
+        data: {
+          word: "",
+          correctAnswer: "",
+          points: 1
+        }
       },
   
       complete: {
-        wordBank: [],
-        sentences: [{ text: "", correctWord: "" }],
-        pointsPerSentence: 1
+        field: "completeQuestions",
+        data: {
+          wordBank: [],
+          sentences: [{ text: "", correctWord: "" }],
+          pointsPerSentence: 1
+        }
       },
   
       correction: {
-        wrongSentence: "",
-        correctSentence: "",
-        points: 1
+        field: "correctionQuestions",
+        data: {
+          wrongSentence: "",
+          correctSentence: "",
+          points: 1
+        }
       },
   
       grammar: {
-        scrambledWords: "",
-        correctSentence: "",
-        points: 1
+        field: "grammarQuestions",
+        data: {
+          scrambledWords: "",
+          correctSentence: "",
+          points: 1
+        }
       },
   
       sentenceBuild: {
-        words: [],
-        affirmative: "",
-        negative: "",
-        question: "",
-        points: 3
+        field: "sentenceBuildQuestions",
+        data: {
+          words: [],
+          affirmative: "",
+          negative: "",
+          question: "",
+          points: 3
+        }
       },
   
       tense: {
-        baseSentence: "",
-        transforms: []
+        field: "tenseTransforms",
+        data: {
+          baseSentence: "",
+          transforms: []
+        }
       }
     };
   
-    const fieldMap = {
-      mcq: "questions",
-      truefalse: "questions",
-      gapfill: "questions",
-      translate: "translateQuestions",
-      complete: "completeQuestions",
-      correction: "correctionQuestions",
-      grammar: "grammarQuestions",
-      sentenceBuild: "sentenceBuildQuestions",
-      tense: "tenseTransforms"
-    };
-  
-    const field = fieldMap[type];
-    if (!field) return;
+    const config = questionTemplates[type];
+    if (!config) return;
   
     setExam(prev => ({
       ...prev,
-      [field]: [...(prev[field] || []), map[type]]
+      [config.field]: [...(prev[config.field] || []), config.data]
     }));
   
     setShowAddQuestion(false);
@@ -150,6 +169,11 @@ export default function EditExam() {
 
   const saveExam = async () => {
     try {
+      if (!exam.level) {
+        toast.error("Imtihon darajasini tanlang")
+        return;
+      }
+      
       const payload = { ...exam };
   
       // ❌ agar passage yo‘q va savollar ham yo‘q bo‘lsa
@@ -220,98 +244,112 @@ export default function EditExam() {
           }
         />
 
+        <select value={exam.level || ""}
+        onChange={e => setExam({...exam, level: e.target.value})}
+        >
+          <option value="">Imtihon darajasini tanlang</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Elementary">Elementary</option>
+          <option value="Pre-intermediate">Pre-intermediate</option>
+          <option value="Pre-IELTS">Pre-IELTS</option>
+          <option value="IELTS-Foundation">IELTS-Foundation</option>
+          <option value="IELTS-Max">IELTS-Max</option>
+        </select>
+
       </div>
 
-      {exam.listeningTF?.length > 0 && (
-      
-  <>
-    <h3>Listening True / False</h3>
+      <>
+  <h3>Listening True / False</h3>
 
-{exam.listeningTF?.map((q, i) => (
-  <div key={i} className="question-card">
-    <input
-      placeholder="Gap"
-      value={q.statement || ""}
-      onChange={e =>
-        updateArray("listeningTF", i, "statement", e.target.value)
-      }
-    />
+  {exam.listeningTF?.map((q, i) => (
+    <div key={i} className="question-card">
+      <input
+        placeholder="Gap"
+        value={q.statement || ""}
+        onChange={e =>
+          updateArray("listeningTF", i, "statement", e.target.value)
+        }
+      />
 
-    <select
-      value={String(q.correct)}
-      onChange={e =>
-        updateArray(
-          "listeningTF",
-          i,
-          "correct",
-          e.target.value === "true"
-        )
-      }      
-    >
-      <option value="true">True</option>  
-      <option value="false">False</option>
-    </select>
+      <select
+        value={String(q.correct)}
+        onChange={e =>
+          updateArray(
+            "listeningTF",
+            i,
+            "correct",
+            e.target.value === "true"
+          )
+        }
+      >
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
 
-    <button onClick={() => deleteFromArray("listeningTF", i)}>Delete</button>
-  </div>
-))}
+      <button
+        className="delete-btn"
+        onClick={() => deleteFromArray("listeningTF", i)}
+      >
+        Delete
+      </button>
+    </div>
+  ))}
 
-<button
-  className="add-btn"
-  onClick={() =>
-    addToArray("listeningTF", {
-      statement: "",
-      correct: true
-    })
-  }
->
-  + Add Listening TF
-</button>
-  </>
-)}
+  <button
+    className="add-btn"
+    onClick={() =>
+      addToArray("listeningTF", {
+        statement: "",
+        correct: true
+      })
+    }
+  >
+    + Add Listening True / False
+  </button>
+</>
 
-{exam.listeningGaps?.length > 0 && (
-  <>
-    <h3>Listening Gap</h3>
-    {exam.listeningGaps.map((q, i) => (
-      <div key={i} className="question-card">
-        <input
-          placeholder="Gapli gap"
-          value={q.sentence || ""}
-          onChange={e =>
-            updateArray("listeningGaps", i, "sentence", e.target.value)
-          }
-        />
+<>
+  <h3>Listening Gap</h3>
 
-        <input
-          placeholder="To‘g‘ri so‘z"
-          value={q.correctWord || ""}
-          onChange={e =>
-            updateArray("listeningGaps", i, "correctWord", e.target.value)
-          }
-        />
-        
-        <button
-      className="delete-btn"
-      onClick={() => deleteFromArray("listeningGaps", i)}
-    >
-      Delete
-    </button>
-      </div>
-    ))}
-    <button
-  className="add-btn"
-  onClick={() =>
-    addToArray("listeningGaps", {
-      sentence: "",
-      correctWord: ""
-    })
-  }
->
-  + Add Listening Gap
-</button>
-  </>
-)}
+  {exam.listeningGaps?.map((q, i) => (
+    <div key={i} className="question-card">
+      <input
+        placeholder="Gapli gap"
+        value={q.sentence || ""}
+        onChange={e =>
+          updateArray("listeningGaps", i, "sentence", e.target.value)
+        }
+      />
+
+      <input
+        placeholder="To‘g‘ri so‘z"
+        value={q.correctWord || ""}
+        onChange={e =>
+          updateArray("listeningGaps", i, "correctWord", e.target.value)
+        }
+      />
+
+      <button
+        className="delete-btn"
+        onClick={() => deleteFromArray("listeningGaps", i)}
+      >
+        Delete
+      </button>
+    </div>
+  ))}
+
+  <button
+    className="add-btn"
+    onClick={() =>
+      addToArray("listeningGaps", {
+        sentence: "",
+        correctWord: ""
+      })
+    }
+  >
+    + Add Listening Gap
+  </button>
+</>
 
       <hr />
 
@@ -324,30 +362,35 @@ export default function EditExam() {
 
 {showAddQuestion && (
   <div className="add-question-box">
+    <h4>Savol turini tanlang</h4>
+
     <select
-      value={newQuestionType}
-      onChange={e => setNewQuestionType(e.target.value)}
+      defaultValue=""
+      onChange={(e) => {
+        const type = e.target.value;
+
+        if (!type) return;
+
+        console.log("✅ SELECTED:", type);
+        addQuestionByType(type);
+
+        e.target.value = ""; // reset
+      }}
     >
-      <option value="">Savol turini tanlang</option>
+      <option value="" disabled>
+        Savol turini tanlang
+      </option>
 
       <option value="mcq">Test (MCQ)</option>
       <option value="truefalse">True / False</option>
       <option value="gapfill">Gap Fill</option>
       <option value="translate">Translate</option>
-      <option value="complete">Complete (Word box)</option>
+      <option value="complete">Complete</option>
       <option value="correction">Correction</option>
       <option value="grammar">Grammar</option>
       <option value="sentenceBuild">Sentence Build</option>
       <option value="tense">Tense Transform</option>
     </select>
-
-    <button
-      className="add-btn"
-      disabled={!newQuestionType}
-      onClick={() => addQuestionByType(newQuestionType)}
-    >
-      + Savol qo‘shish
-    </button>
   </div>
 )}
 
@@ -535,6 +578,42 @@ export default function EditExam() {
   </>
 )}
 
+{exam.grammarQuestions?.length > 0 && (
+  <>
+    <h3>Grammar</h3>
+
+    {exam.grammarQuestions.map((q, i) => (
+      <div key={i} className="question-card">
+
+        <input
+          placeholder="Aralashtirilgan so‘zlar"
+          value={q.scrambledWords}
+          onChange={e =>
+            updateArray("grammarQuestions", i, "scrambledWords", e.target.value)
+          }
+        />
+
+        <input
+          placeholder="To‘g‘ri gap"
+          value={q.correctSentence}
+          onChange={e =>
+            updateArray("grammarQuestions", i, "correctSentence", e.target.value)
+          }
+        />
+
+        <button
+          className="delete-btn"
+          onClick={() => deleteFromArray("grammarQuestions", i)}
+        >
+          Delete
+        </button>
+
+      </div>
+    ))}
+  </>
+)}
+
+
       {/* ================= TRANSLATE ================= */}
       {exam.translateQuestions?.length > 0 && (
         <>
@@ -572,6 +651,99 @@ export default function EditExam() {
 </button>
         </>
       )}
+
+{exam.completeQuestions?.length > 0 && (
+  <>
+    <h3>Complete</h3>
+
+    {exam.completeQuestions.map((q, i) => (
+      <div key={i} className="question-card">
+
+        <input
+          placeholder="Word bank (vergul bilan)"
+          value={(q.wordBank || []).join(", ")}
+          onChange={e =>
+            updateArray(
+              "completeQuestions",
+              i,
+              "wordBank",
+              e.target.value.split(",").map(w => w.trim())
+            )
+          }
+        />
+
+        {q.sentences.map((s, si) => (
+          <div key={si} className="nested-card">
+            <input
+              placeholder="Gap"
+              value={s.text}
+              onChange={e => {
+                const copy = [...exam.completeQuestions];
+                copy[i].sentences[si].text = e.target.value;
+                setExam({ ...exam, completeQuestions: copy });
+              }}
+            />
+          </div>
+        ))}
+
+        <button
+          className="add-btn"
+          onClick={() => {
+            const copy = [...exam.completeQuestions];
+            copy[i].sentences.push({ text: "", correctWord: "" });
+            setExam({ ...exam, completeQuestions: copy });
+          }}
+        >
+          + Add Sentence
+        </button>
+
+        <button
+          className="delete-btn"
+          onClick={() => deleteFromArray("completeQuestions", i)}
+        >
+          Delete
+        </button>
+
+      </div>
+    ))}
+  </>
+)}
+
+{exam.correctionQuestions?.length > 0 && (
+  <>
+    <h3>Correction</h3>
+
+    {exam.correctionQuestions.map((q, i) => (
+      <div key={i} className="question-card">
+
+        <input
+          placeholder="Xato gap"
+          value={q.wrongSentence}
+          onChange={e =>
+            updateArray("correctionQuestions", i, "wrongSentence", e.target.value)
+          }
+        />
+
+        <input
+          placeholder="To‘g‘ri gap"
+          value={q.correctSentence}
+          onChange={e =>
+            updateArray("correctionQuestions", i, "correctSentence", e.target.value)
+          }
+        />
+
+        <button
+          className="delete-btn"
+          onClick={() => deleteFromArray("correctionQuestions", i)}
+        >
+          Delete
+        </button>
+
+      </div>
+    ))}
+  </>
+)}
+
 
 {exam.reading && (
   <>

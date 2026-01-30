@@ -19,10 +19,6 @@ export default function ExamDetail() {
       console.log("READING RAW:", res.data.reading);
       setExam(res.data);
     });
-  }, [id]);  
-
-  useEffect(() => {
-    api.get(`/exams/${id}`).then(res => setExam(res.data));
   }, [id]);
 
   if (!exam) {
@@ -47,12 +43,13 @@ export default function ExamDetail() {
       <h2>{exam.title}</h2>
       <p>Vaqt limiti: {exam.timeLimit} daqiqa</p>
       <p>O‘tish foizi: {exam.passPercentage}%</p>
+      <p className="exam-level">Daraja: <b>{exam.level}</b></p>
 
       <hr />
 
       <h3><FaRegCircleQuestion /> Test Savollar</h3>
 
-      {exam.questions.map((q, i) => (
+      {exam.questions?.map((q, i) => (
         <div key={i} className="question-card">
           <p><b>{i + 1}) {q.questionText}</b></p>
 

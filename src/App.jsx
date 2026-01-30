@@ -17,6 +17,7 @@ import EditExam from "./pages/editExam/EditExam";
 import Navbar from "./components/navbar/Navbar";
 import WritingList from "./pages/teacher/WritingList";
 import WritingCheck from "./pages/teacher/WritingCheck";
+import SelectRole from "./pages/selectRole/SelectRole";
 
 function App() {
 
@@ -27,19 +28,22 @@ function App() {
   const [role, setRole] = useState(null);
   const location = useLocation(); // ✅ endi to‘g‘ri
 
+  const hideNavbar = 
+  location.pathname.startsWith("/login") ||
+  location.pathname === "/select-role";
+
   return (
     <>
       <ToastContainer />
 
-      {/* LOGINdan boshqa hamma sahifada Navbar chiqadi */}
-      {location.pathname !== "/login" && (
-        <Navbar role={role} setRole={setRole} />
-      )}
+      {!hideNavbar && <Navbar role={role} setRole={setRole} />}
 
       <Routes>
-        {/* LOGIN */}
+        {/* ROLE TANLASH */}
+        <Route path="/select-role" element={<SelectRole/>} />
+
         <Route
-          path="/login"
+          path="/login/:role"
           element={<LoginForm setRole={setRole} />}
         />
 
@@ -69,7 +73,7 @@ function App() {
         {/* DEFAULT */}
         <Route
           path="*"
-          element={<Navigate to={role ? "/" : "/login"} />}
+          element={<Navigate to={role ? "/" : "/select-role"} />}
         />
       </Routes>
     </>

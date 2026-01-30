@@ -1,29 +1,33 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./LoginForm.css";
 
 export default function LoginForm({ setRole }) {
+  const { role } = useParams(); // 👈 teacher yoki student
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (password === "2315") {
+    if (role === "teacher" && password === "2315") {
       setRole("teacher");
       navigate("/");
-    }
-    else if (password === "1412") {
+    } 
+    else if (role === "student" && password === "1412") {
       setRole("student");
       navigate("/");
-    }
+    } 
     else {
-      toast.error("Parol noto'g'ri!");
+      toast.error("Parol noto‘g‘ri!");
     }
   };
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <div className="login-form">
+      <h2>
+        {role === "teacher" ? "Examer Login" : "Student Login"}
+      </h2>
 
       <input
         type="password"
@@ -33,6 +37,7 @@ export default function LoginForm({ setRole }) {
       />
 
       <button onClick={handleLogin}>Kirish</button>
+      </div>
     </div>
   );
 }

@@ -15,6 +15,7 @@ export default function TeacherPanel() {
   const [questions, setQuestions] = useState([]);
   const [showWriting, setShowWriting] = useState(false);
   const [showReading, setShowReading] = useState(false);
+  const [level, setLevel] = useState("");
 
   const [writingTask, setWritingTask] = useState({
     title: "",
@@ -190,7 +191,14 @@ export default function TeacherPanel() {
   };  
 
   const createExam = async () => {
-    if (!title) return alert("Imtihon nomini kiriting");
+    if (!title) {
+      toast.error("Imtihon nomini kiriting")
+      return;
+    };
+    if (!level) {
+      toast.error("Imtihon darajasini tanlang")
+      return;
+    }
   
     try {
       const questionsArr = questions
@@ -279,6 +287,7 @@ export default function TeacherPanel() {
 
       await api.post("/exams/create", {
         title,
+        level,
         timeLimit,
         passPercentage,
         questions: questionsArr,
@@ -336,6 +345,20 @@ export default function TeacherPanel() {
           value={passPercentage}
           onChange={(e) => setPassPercentage(e.target.value)}
         />
+
+<select
+  className="level-select"
+  value={level}
+  onChange={(e) => setLevel(e.target.value)}
+>
+  <option value="">Imtihon darajasini tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
       </div>
 
       {/* LISTENING QUESTIONS */}

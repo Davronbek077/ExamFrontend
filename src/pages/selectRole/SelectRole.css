@@ -1,0 +1,123 @@
+/* ===== PAGE ===== */
+.role-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+    font-family: "Inter", sans-serif;
+  }
+  
+  .role-container h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #1e293b;
+    text-align: center;
+  }
+  
+  /* ===== CARDS WRAPPER ===== */
+  .role-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 35px;
+    width: 100%;
+    max-width: 900px;
+  }
+  
+  /* ===== CARD ===== */
+  .role-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 40px 30px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+    overflow: hidden;
+  }
+  
+  /* Gradient overlay (hover) */
+  .role-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  
+  /* ===== TEXT ===== */
+  .role-card h3 {
+    font-size: 26px;
+    margin-bottom: 12px;
+    color: #0f172a;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .role-card p {
+    font-size: 16px;
+    color: #475569;
+    position: relative;
+    z-index: 2;
+    line-height: 1.5;
+  }
+  
+  .role-card:hover::before {
+    opacity: 1;
+  }
+  
+  /* ===== ROLE COLORS ===== */
+  .role-card.teacher {
+    border-top: 6px solid #2563eb;
+  }
+  
+  .role-card.student {
+    border-top: 6px solid #16a34a;
+  }
+  
+  /* ===== ICON (OPTIONAL) ===== */
+  .role-card.teacher h3::before {
+    content: "";
+    display: block;
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+  
+  .role-card.student h3::before {
+    content: "";
+    display: block;
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+  
+  /* ===== CLICK FEEDBACK ===== */
+  .role-card:active {
+    transform: scale(0.98);
+  }
+  
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .role-container h2 {
+      font-size: 26px;
+    }
+  
+    .role-cards {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+  
+    .role-card {
+      padding: 32px 24px;
+    }
+  
+    .role-card h3 {
+      font-size: 22px;
+    }
+  }
+  
