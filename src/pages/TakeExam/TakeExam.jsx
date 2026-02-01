@@ -128,6 +128,10 @@ export default function TakeExam() {
       });
 
       console.log("ANSWERS SENT:", formattedAnswers);
+      console.log("answersRef.current:", answersRef.current);
+      console.log("formattedAnswers:", formattedAnswers);
+      console.log("sentenceBuildAnswers:", sentenceBuildAnswers);
+      console.log("writingText:", writingText);
   
       setSubmitted(true);
       clearInterval(timerRef.current);

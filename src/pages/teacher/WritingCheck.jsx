@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { ClipLoader } from "react-spinners";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { toast } from "react-toastify";
 import "./TeacherPanel.css";
 
 export default function WritingCheck() {
@@ -35,7 +36,7 @@ export default function WritingCheck() {
       writingScore: Number(score)
     });
 
-    alert("Writing baholandi");
+    toast.success("Writing baholandi");
     navigate("/teacher/writings");
   };
 

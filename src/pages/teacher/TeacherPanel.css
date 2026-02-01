@@ -1267,3 +1267,23 @@ body {
 .level-select option {
   font-weight: 500;
 }
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: rgb(41, 41, 241);
+  border: 2px solid rgb(41, 41, 241);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.back-btn:hover {
+  background-color: rgb(41, 41, 241) !important;
+  color: white;
+  transform: translateX(-3px);
+}

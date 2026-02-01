@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import "./StudentPanel.css";
 
 export default function StudentPanel() {
@@ -51,9 +52,9 @@ export default function StudentPanel() {
       {/* EXAMS */}
       {selectedLevel && (
         <div className="exam-section">
-          <button className="back-btn" onClick={goBackToLevels}>
-            Back
-          </button>
+          <button className="back-btn" onClick={() => navigate(-1)}>
+      <MdOutlineKeyboardBackspace className="back-icon" /> Back
+      </button>
           <h3 className="student-exam-title">
             {selectedLevel} imtihonlari
           </h3>
