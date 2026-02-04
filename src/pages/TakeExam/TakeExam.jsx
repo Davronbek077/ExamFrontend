@@ -29,6 +29,9 @@ export default function TakeExam() {
   const [studentName, setStudentName] = useState("");
   const [writingText, setWritingText] = useState("");
 
+  const [exitAttempts, setExitAttempts] = useState(0);
+  const [examAborted, setExamAborted] = useState(false);
+
   const timerRef = useRef(null);
   const answersRef = useRef({});
   const submittingRef = useRef(false);
@@ -68,6 +71,44 @@ export default function TakeExam() {
 
     return () => clearInterval(timerRef.current);
   }, [started, submitted]);
+
+  useEffect(() => {
+    if (!started || submitted) return;
+  
+    const handleVisibilityChange = () => {
+      // faqat HOME yoki RECENT APPS
+      if (document.visibilityState === "hidden" && !examAborted) {
+        setExitAttempts((prev) => {
+          const next = prev + 1;
+  
+          if (next === 1) {
+            alert("⚠️ Sahifadan chiqsangiz, imtihon yakunlanadi!");
+            return next;
+          }
+  
+          if (next >= 2) {
+            alert("❌ Imtihon yakunlandi. Javoblar yuborilmadi.");
+  
+            setExamAborted(true);
+            clearInterval(timerRef.current);
+  
+            // ❗ IMTIHON YUBORILMAYDI
+            navigate("/");
+  
+            return next;
+          }
+  
+          return prev;
+        });
+      }
+    };
+  
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+  
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [started, submitted, examAborted, navigate]);
+  
 
   /* ===== ANSWER HANDLER (ASOSIY NUQTA) ===== */
   const setAns = (questionId, value) => {
