@@ -73,33 +73,18 @@ export default function TakeExam() {
   }, [started, submitted]);
 
   useEffect(() => {
-    if (!started || submitted) return;
+    if (!started || submitted || examAborted) return;
   
     const handleVisibilityChange = () => {
       // faqat HOME yoki RECENT APPS
-      if (document.visibilityState === "hidden" && !examAborted) {
-        setExitAttempts((prev) => {
-          const next = prev + 1;
+      if (document.visibilityState === "hidden") {
+        toast.error("Imtihon yakunlandi! Javoblar yuborilmadi");
   
-          if (next === 1) {
-            alert("⚠️ Sahifadan chiqsangiz, imtihon yakunlanadi!");
-            return next;
-          }
+        setExamAborted(true);
+        clearInterval(timerRef.current);
   
-          if (next >= 2) {
-            alert("❌ Imtihon yakunlandi. Javoblar yuborilmadi.");
-  
-            setExamAborted(true);
-            clearInterval(timerRef.current);
-  
-            // ❗ IMTIHON YUBORILMAYDI
-            navigate("/");
-  
-            return next;
-          }
-  
-          return prev;
-        });
+        // ❗ submit CHAQRILMAYDI
+        navigate("/");
       }
     };
   
@@ -107,7 +92,7 @@ export default function TakeExam() {
   
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [started, submitted, examAborted, navigate]);
+  }, [started, submitted, examAborted, navigate]);  
   
 
   /* ===== ANSWER HANDLER (ASOSIY NUQTA) ===== */
