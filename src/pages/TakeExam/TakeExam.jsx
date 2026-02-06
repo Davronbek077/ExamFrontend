@@ -78,7 +78,7 @@ export default function TakeExam() {
     const handleVisibilityChange = () => {
       // faqat HOME yoki RECENT APPS
       if (document.visibilityState === "hidden") {
-        toast.error("Imtihon yakunlandi! Javoblar yuborilmadi");
+        toast.error("Imtihon yakunlandi!");
   
         setExamAborted(true);
         clearInterval(timerRef.current);
