@@ -18,6 +18,7 @@ import Navbar from "./components/navbar/Navbar";
 import WritingList from "./pages/teacher/WritingList";
 import WritingCheck from "./pages/teacher/WritingCheck";
 import SelectRole from "./pages/selectRole/SelectRole";
+import StudentResult from "./pages/stats/StudentResult";
 
 function App() {
 
@@ -54,6 +55,7 @@ function App() {
             <Route path="/teacher/create" element={<CreateExam />} />
             <Route path="/teacher/exams" element={<ExamsList />} />
             <Route path="/stats/:id" element={<Stats />} />
+            <Route path="/results/:resultId" element={<StudentResult/>} />
             <Route path="/exam/:id" element={<ExamDetail />} />
             <Route path="/exams/edit/:id" element={<EditExam />} />
             <Route path="/teacher/writings" element={<WritingList />} />

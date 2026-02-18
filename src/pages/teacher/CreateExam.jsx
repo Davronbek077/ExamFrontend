@@ -65,7 +65,7 @@ export default function TeacherPanel() {
         sentences: [
           {text: "", correctWord: ""}
         ],
-        pointsPerSentence: 1,
+        pointsPerSentence: "",
   
         scrambledWords: "",    // grammar
         wrongSentence: "",
@@ -80,7 +80,7 @@ export default function TeacherPanel() {
         tenses: [],
         tenseAnswers: {},
   
-        points: 1
+        points: ""
       }
     ]);
   };  
@@ -102,7 +102,7 @@ export default function TeacherPanel() {
       ...reading,
       tfQuestions: [
         ...reading.tfQuestions,
-        {statement: "", correct: "true"}
+        {statement: "", correct: "true", points: ""}
       ]
     });
   };
@@ -129,7 +129,7 @@ export default function TeacherPanel() {
 
   // --- LISTENING TRUE/FALSE ---
   const addListeningTF = () => {
-    setListeningTF([...listeningTF, { statement: "", correct: true }]);
+    setListeningTF([...listeningTF, { statement: "", correct: true, points: "" }]);
   };
 
   const updateListeningTF = (i, field, value) => {
@@ -142,14 +142,14 @@ export default function TeacherPanel() {
   const addListeningGap = () => {
     setListeningGaps([
       ...listeningGaps,
-      { sentence: "", correctWord: "" }   // ✅ answer emas endi correctWord
+      { sentence: "", correctWord: "", points: "" }   // ✅ answer emas endi correctWord
     ]);
   };
 
   const updateListeningGap = (i, field, value) => {
     const c = [...listeningGaps];
     c[i][field] = value;
-    setListeningGaps(c);
+    setListeningGaps(c); 
   };
 
   const addReadingGap = () => {
@@ -157,7 +157,7 @@ export default function TeacherPanel() {
       ...reading,
       gapQuestions: [
         ...reading.gapQuestions,
-        {sentence: "", correctWord: ""}
+        {sentence: "", correctWord: "", points: ""}
       ]
     });
   };
@@ -170,7 +170,7 @@ export default function TeacherPanel() {
         {
           question: "",
           keywords: [],
-          maxPoints: 2
+          maxPoints: ""
         }
       ]
     });
@@ -184,7 +184,7 @@ export default function TeacherPanel() {
         {
           sentence: "",        // passage’dan olingan gap
           correctAnswer: "",   // to‘g‘ri tarjima
-          points: 2
+          points: ""
         }
       ]
     });
@@ -208,7 +208,7 @@ export default function TeacherPanel() {
           questionText: q.questionText,
           options: q.options || [],
           correctAnswer: q.correctAnswer,
-          points: 1
+          points: Number(q.points || 0)
         }));
   
       const grammarArr = questions
@@ -220,7 +220,8 @@ export default function TeacherPanel() {
         .map(q => ({
           scrambledWords: q.scrambledWords,
           correctSentence: q.correctSentence,
-          points: 1
+          points: Number(q.points || 0)
+
         }));
   
       const tenseArr = questions
@@ -234,10 +235,10 @@ export default function TeacherPanel() {
             ([tense, correctSentence]) => ({
               tense,
               correctSentence,
-              points: 1
+              points: Number(q.points || 0)
             })
           ),
-          points: 1
+          points: Number(q.points || 0)
         }));
 
         const completeArr = questions
@@ -245,7 +246,7 @@ export default function TeacherPanel() {
         .map(q => ({
           wordBank: q.wordBank.split(",").map(w => w.trim()),
           sentences: q.sentences,
-          pointsPerSentence: q.pointsPerSentence || 1
+          pointsPerSentence: Number(q.pointsPerSentence || 0)
         }));
 
         const translateQuestions = questions
@@ -253,7 +254,7 @@ export default function TeacherPanel() {
         .map(q => ({
           word: q.word,
           correctAnswer: q.correctAnswer,
-          points: q.points || 1
+          points: Number(q.points || 0)
         }));
 
         const correctionQuestions = questions
@@ -261,7 +262,7 @@ export default function TeacherPanel() {
         .map(q => ({
           wrongSentence: q.wrongSentence,
           correctSentence: q.correctSentence,
-          points: q.points || 1
+          points: Number(q.points || 0)
         }));
 
         const preparedWritingTask = {
@@ -281,7 +282,7 @@ export default function TeacherPanel() {
     affirmative: q.affirmative,
     negative: q.negative,
     question: q.questionForm,
-    points: q.points || 3
+    points: Number(q.points || 0)
   }));
 
 
@@ -294,9 +295,42 @@ export default function TeacherPanel() {
         grammarQuestions: grammarArr,
         tenseTransforms: tenseArr,
         sentenceBuildQuestions,
-        listeningTF,
-        listeningGaps,
-        ...(showReading && {reading}),
+        listeningTF: listeningTF.map(q => ({
+          ...q,
+          points: Number(q.points || 0)
+        })),
+        
+        listeningGaps: listeningGaps.map(q => ({
+          ...q,
+          points: Number(q.points || 0)
+        })),
+        
+        ...(showReading && {
+          reading: {
+            ...reading,
+        
+            tfQuestions: reading.tfQuestions.map(q => ({
+              ...q,
+              points: Number(q.points || 0)
+            })),
+        
+            gapQuestions: reading.gapQuestions.map(q => ({
+              ...q,
+              points: Number(q.points || 0)
+            })),
+        
+            shortAnswerQuestions: reading.shortAnswerQuestions.map(q => ({
+              ...q,
+              maxPoints: Number(q.maxPoints || 0)
+            })),
+        
+            translationQuestions: reading.translationQuestions.map(q => ({
+              ...q,
+              points: Number(q.points || 0)
+            }))
+          }
+        }),
+
         completeQuestions: completeArr,
         ...(showWriting && {writingTask: preparedWritingTask}),
         translateQuestions,
@@ -382,6 +416,15 @@ export default function TeacherPanel() {
               <option value="true">True</option>
               <option value="false">False</option>
             </select>
+
+            <input
+  type="number"
+  placeholder="Ball"
+  value={item.points ?? ""}
+  onChange={(e) =>
+    updateListeningTF(i, "points", e.target.value)
+  }
+/>
           </div>
         ))}
         <button onClick={addListeningTF}>+ True/False qo‘shish</button>
@@ -404,6 +447,16 @@ export default function TeacherPanel() {
                 updateListeningGap(i, "correctWord", e.target.value)
               }
             />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={item.points ?? ""}
+  onChange={(e) =>
+    updateListeningGap(i, "points", e.target.value)
+  }
+/>
+
           </div>
         ))}
         <button onClick={addListeningGap}>+ Gapfill qo‘shish</button>
@@ -482,6 +535,17 @@ export default function TeacherPanel() {
                     updateQuestion(i, "correctSentence", e.target.value)
                   }
                 />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points ?? ""}
+  onChange={(e) =>
+    updateQuestion(i, "points", e.target.value)
+  }
+/>
+
+
               </>
             )}
 
@@ -525,6 +589,17 @@ export default function TeacherPanel() {
                     }
                   />
                 ))}
+                
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points ?? ""}
+  onChange={(e) =>
+    updateQuestion(i, "points", e.target.value)
+  }
+/>
+
+
               </>
             )}
 
@@ -540,6 +615,17 @@ export default function TeacherPanel() {
               value={q.correctAnswer}
               onChange={e => updateQuestion(i, "correctAnswer", e.target.value)}
               />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points ?? ""}
+  onChange={(e) =>
+    updateQuestion(i, "points", e.target.value)
+  }
+/>
+
+
               </>
             )}
 
@@ -579,6 +665,15 @@ export default function TeacherPanel() {
         updateQuestion(i, "questionForm", e.target.value)
       }
     />
+
+<input
+  type="number"
+  value={q.points ?? ""}
+  onChange={(e) =>
+    updateQuestion(i, "points", e.target.value)
+  }
+/>
+
 
   </div>
 )}
@@ -622,6 +717,15 @@ export default function TeacherPanel() {
           />
         </div>
       ))}
+
+<input
+  type="number"
+  placeholder="Har bir gap uchun ball"
+  value={q.pointsPerSentence ?? ""}
+  onChange={e =>
+    updateQuestion(i, "pointsPerSentence", e.target.value)
+  }
+/>
     </div>
 
     <button
@@ -651,6 +755,15 @@ export default function TeacherPanel() {
               value={q.correctSentence}
               onChange={e => updateQuestion(i, "correctSentence", e.target.value)}
               />
+
+<input
+  type="number"
+  value={q.points ?? ""}
+  onChange={(e) =>
+    updateQuestion(i, "points", e.target.value)
+  }
+/>
+
               </>
             )}
             
@@ -721,6 +834,16 @@ export default function TeacherPanel() {
         <option value="false">False</option>
         <option value="not_given">Not Given</option>
       </select>
+
+      <input type="number" 
+      placeholder="Ball"
+      value={q.points ?? ""}
+      onChange={(e) => {
+        const arr = [...reading.tfQuestions];
+        arr[i].points = e.target.value;
+        setReading({...reading, tfQuestions: arr});
+      }}
+      />
     </div>
   ))}
 
@@ -749,6 +872,16 @@ export default function TeacherPanel() {
           arr[i].correctWord = e.target.value;
           setReading({ ...reading, gapQuestions: arr });
         }}
+      />
+
+      <input type="number" 
+      placeholder="Ball"
+      value={q.points ?? ""}
+      onChange={(e) => {
+        const arr = [...reading.gapQuestions];
+        arr[i].points = e.target.value;
+        setReading({...reading, gapQuestions: arr});
+      }}
       />
     </div>
   ))}
@@ -784,7 +917,16 @@ export default function TeacherPanel() {
       }}
     />
 
-    <small>50% = 1 ball | 100% = 2 ball</small>
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.maxPoints ?? ""}
+  onChange={e => {
+    const r = { ...reading };
+    r.shortAnswerQuestions[i].maxPoints = e.target.value;
+    setReading(r);
+  }}
+/>
 
     <button
       className="shortAnswer-delete-btn"
@@ -829,6 +971,18 @@ export default function TeacherPanel() {
         setReading({ ...reading, translationQuestions: arr });
       }}
     />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points ?? ""}
+  onChange={(e) => {
+    const arr = [...reading.translationQuestions];
+    arr[i].points = e.target.value;
+    setReading({ ...reading, translationQuestions: arr });
+  }}
+/>
+
 
   </div>
 ))}
@@ -909,3 +1063,4 @@ export default function TeacherPanel() {
     </div>
   );
 }
+ 

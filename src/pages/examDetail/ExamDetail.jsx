@@ -65,6 +65,10 @@ export default function ExamDetail() {
           {q.type === "gapfill" && <p>Bo‘sh joyni to‘ldiring</p>}
 
           <p className="correct">✔ To‘g‘ri javob: {q.correctAnswer}</p>
+
+          {q.points !== undefined && (
+            <p><b>Ball:</b> {q.points}</p>
+          )}
         </div>
       ))}
 
@@ -77,6 +81,10 @@ export default function ExamDetail() {
             <div key={i} className="question-card">
               <p><b>{q.statement}</b></p>
               <p className="correct">✔ {q.correct ? "True" : "False"}</p>
+              
+              {q.points !== undefined && (
+                <p><b>Ball:</b> {q.points}</p>
+              )}
             </div>
           ))}
         </>
@@ -89,6 +97,10 @@ export default function ExamDetail() {
             <div key={i} className="question-card">
               <p>{q.sentence}</p>
               <p className="correct">✔ {q.correctWord}</p>
+
+              {q.points !== undefined && (
+                <p><b>Ball:</b> {q.points}</p>
+              )}
             </div>
           ))}
         </>
@@ -101,6 +113,10 @@ export default function ExamDetail() {
             <div key={i} className="question-card">
               <p>Aralash gap: <b>{q.scrambledWords}</b></p>
               <p className="correct">✔ {q.correctSentence}</p>
+
+              {q.points !== undefined && (
+                <p><b>Ball:</b> {q.points}</p>
+              )}
             </div>
           ))}
         </>
@@ -114,10 +130,17 @@ export default function ExamDetail() {
               <p><b>Asosiy gap:</b> {t.baseSentence}</p>
 
               {t.transforms.map((tr, j) => (
-                <p key={j}>
-                  <b>{tr.tense}:</b> {tr.correctSentence}
-                </p>
+                <div key={j}>
+                  <p>
+                    <b>{tr.tense}:</b> {tr.correctSentence}
+                  </p>
+
+                  <p>
+                    <b>Ball:</b> {tr.points}
+                  </p>
+                </div>
               ))}
+
             </div>
           ))}
         </>
@@ -142,6 +165,7 @@ export default function ExamDetail() {
           <div key={j} className="sentence-block">
             <p>{j + 1}) {s.text}</p>
             <p className="correct">✔ To‘g‘ri javob: {s.correctWord}</p>
+            <p><b>Ball:</b> {block.pointsPerSentence}</p>
           </div>
         ))}
       </div>
@@ -158,6 +182,10 @@ export default function ExamDetail() {
     <div key={i} className="question-card">
       <p><b>{i + 1}) Tarjima qiling:</b> {q.word}</p>
       <p className="correct">✔ To'g'ri javob: {q.correctAnswer}</p>
+
+      {q.points !== undefined && (
+        <p><b>Ball:</b> {q.points}</p>
+      )}
     </div>
   ))}
   </>
@@ -172,6 +200,10 @@ export default function ExamDetail() {
     <div key={i} className="question-card">
       <p><b>{i + 1}) Xato gap:</b> {q.wrongSentence}</p>
       <p className="correct">✔ To'g'ri variant: {q.correctSentence}</p>
+
+      {q.points !== undefined && (
+        <p><b>Ball:</b> {q.points}</p>
+      )}
     </div>
   ))}
   </>
@@ -207,9 +239,7 @@ export default function ExamDetail() {
           </p>
         </div>
 
-        {q.points && (
-          <p><b>Ball:</b> {q.points}</p>
-        )}
+        <p><b>Ball:</b> {q.points}</p>
 
       </div>
     ))}
@@ -234,6 +264,7 @@ export default function ExamDetail() {
       <div key={i} className="question-card">
         <p><b>{i + 1}) {q.statement}</b></p>
         <p className="correct">✔ {q.correct}</p>
+        <p><b>Ball:</b> {q.points}</p>
       </div>
     ))}
   </>
@@ -247,6 +278,7 @@ export default function ExamDetail() {
       <div key={i} className="question-card">
         <p><b>{i + 1})</b> {q.sentence}</p>
         <p className="correct">✔ {q.correctWord}</p>
+        <p><b>Ball:</b> {q.points}</p>
       </div>
     ))}
   </>
@@ -264,6 +296,7 @@ export default function ExamDetail() {
         <p className="correct">
           ✔ To‘g‘ri javob: {q.correctAnswer}
         </p>
+        <p><b>Ball:</b> {q.points}</p>
       </div>
     ))}
   </>
@@ -289,9 +322,7 @@ export default function ExamDetail() {
               : "—"}
           </p>
 
-          <p>
-            <b>Max ball:</b> {q.maxPoints ?? 2}
-          </p>
+          <p><b>Ball:</b> {q.maxPoints}</p>
 
         </div>
       ))}

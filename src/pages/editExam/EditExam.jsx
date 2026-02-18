@@ -286,6 +286,19 @@ export default function EditExam() {
         <option value="false">False</option>
       </select>
 
+      <input type="number" 
+      placeholder="Ball"
+      value={q.points === 0 ? "" : q.points ?? ""}
+      onChange={e => 
+        updateArray(
+          "listeningTF",
+          i,
+          "points",
+          e.target.value === "" ? 0 : Number(e.target.value)
+        )
+      }
+      />
+
       <button
         className="delete-btn"
         onClick={() => deleteFromArray("listeningTF", i)}
@@ -300,7 +313,8 @@ export default function EditExam() {
     onClick={() =>
       addToArray("listeningTF", {
         statement: "",
-        correct: true
+        correct: true,
+        points: 1
       })
     }
   >
@@ -329,6 +343,21 @@ export default function EditExam() {
         }
       />
 
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e =>
+    updateArray(
+      "listeningGaps",
+      i,
+      "points",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
+
       <button
         className="delete-btn"
         onClick={() => deleteFromArray("listeningGaps", i)}
@@ -343,7 +372,8 @@ export default function EditExam() {
     onClick={() =>
       addToArray("listeningGaps", {
         sentence: "",
-        correctWord: ""
+        correctWord: "",
+        points: 1
       })
     }
   >
@@ -427,6 +457,21 @@ export default function EditExam() {
                 }
               />
 
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e =>
+    updateArray(
+      "questions",
+      i,
+      "points",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
+
               <button onClick={() => deleteFromArray("questions", i)}>Delete</button>
             </div>
           ))}
@@ -437,7 +482,8 @@ export default function EditExam() {
     addToArray("questions", {
       questionText: "",
       options: ["", "", "", ""],
-      correctAnswer: ""
+      correctAnswer: "",
+      points: 1
     })
   }
 >
@@ -473,6 +519,21 @@ export default function EditExam() {
                   updateArray("sentenceBuildQuestions", i, "question", e.target.value)
                 }
               />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e =>
+    updateArray(
+      "sentenceBuildQuestions",
+      i,
+      "points",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
               <button onClick={() => deleteFromArray("sentenceBuildQuestions", i)}>Delete</button>
             </div>
           ))}
@@ -484,7 +545,8 @@ export default function EditExam() {
       words: [],
       affirmative: "",
       negative: "",
-      question: ""
+      question: "",
+       points: 3
     })
   }
 >
@@ -530,6 +592,19 @@ export default function EditExam() {
                 setExam({ ...exam, tenseTransforms: copy });
               }}
             />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={tr.points === 0 ? "" : tr.points ?? ""}
+  onChange={e => {
+    const copy = [...exam.tenseTransforms];
+    copy[i].transforms[ti].points =
+      e.target.value === "" ? 0 : Number(e.target.value);
+    setExam({ ...exam, tenseTransforms: copy });
+  }}
+/>
+
 
             <button
               onClick={() => {
@@ -601,6 +676,21 @@ export default function EditExam() {
           }
         />
 
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e =>
+    updateArray(
+      "grammarQuestions",
+      i,
+      "points",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
+
         <button
           className="delete-btn"
           onClick={() => deleteFromArray("grammarQuestions", i)}
@@ -634,6 +724,21 @@ export default function EditExam() {
                   updateArray("translateQuestions", i, "correctAnswer", e.target.value)
                 }
               />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e =>
+    updateArray(
+      "translateQuestions",
+      i,
+      "points",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
               <button onClick={() => deleteFromArray("translateQuestions", i)}>Delete</button>
             </div>
           ))}
@@ -643,7 +748,8 @@ export default function EditExam() {
   onClick={() =>
     addToArray("translateQuestions", {
       word: "",
-      correctAnswer: ""
+      correctAnswer: "",
+      points: 1
     })
   }
 >
@@ -685,6 +791,21 @@ export default function EditExam() {
             />
           </div>
         ))}
+
+<input
+  type="number"
+  placeholder="Har gap uchun ball"
+  value={q.pointsPerSentence === 0 ? "" : q.pointsPerSentence ?? ""}
+  onChange={e =>
+    updateArray(
+      "completeQuestions",
+      i,
+      "pointsPerSentence",
+      e.target.value === "" ? 0 : Number(e.target.value)
+    )
+  }
+/>
+
 
         <button
           className="add-btn"
@@ -729,6 +850,19 @@ export default function EditExam() {
           value={q.correctSentence}
           onChange={e =>
             updateArray("correctionQuestions", i, "correctSentence", e.target.value)
+          }
+        />
+
+        <input type="number" 
+          placeholder="Ball"
+          value={q.points === 0 ? "" : q.points ?? ""}
+          onChange={e => 
+            updateArray(
+              "correctionQuestions",
+              i,
+              "points",
+              e.target.value === "" ? 0 : Number(e.target.value)
+            )
           }
         />
 
@@ -803,6 +937,30 @@ export default function EditExam() {
   <option value="not_given">Not Given</option>
 </select>
 
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        tfQuestions: prev.reading.tfQuestions.map((item, idx) =>
+          idx === i
+            ? {
+                ...item,
+                points:
+                  e.target.value === "" ? 0 : Number(e.target.value)
+              }
+            : item
+        )
+      }
+    }));
+  }}
+/>
+
+
 <button
   className="delete-btn"
   onClick={() => {
@@ -826,7 +984,8 @@ export default function EditExam() {
     const copy = { ...exam.reading };
     copy.tfQuestions.push({
       statement: "",
-      correct: "true"
+      correct: "true",
+      points: 1
     });    
     setExam({ ...exam, reading: copy });
   }}
@@ -872,6 +1031,30 @@ export default function EditExam() {
               }}              
             />
 
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        gapQuestions: prev.reading.gapQuestions.map((item, idx) =>
+          idx === i
+            ? {
+                ...item,
+                points:
+                  e.target.value === "" ? 0 : Number(e.target.value)
+              }
+            : item
+        )
+      }
+    }));
+  }}
+/>
+
+
 <button
   className="delete-btn"
   onClick={() => {
@@ -892,7 +1075,7 @@ export default function EditExam() {
   className="add-btn"
   onClick={() => {
     const copy = { ...exam.reading };
-    copy.gapQuestions.push({ sentence: "", correctWord: "" });
+    copy.gapQuestions.push({ sentence: "", correctWord: "", points: 1 });
     setExam({ ...exam, reading: copy });
   }}
 >
@@ -958,6 +1141,31 @@ export default function EditExam() {
     }));
   }}
 />
+
+<input
+  type="number"
+  placeholder="Max Ball"
+  value={q.maxPoints === 0 ? "" : q.maxPoints ?? ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        shortAnswerQuestions:
+          prev.reading.shortAnswerQuestions.map((item, idx) =>
+            idx === i
+              ? {
+                  ...item,
+                  maxPoints:
+                    e.target.value === "" ? 0 : Number(e.target.value)
+                }
+              : item
+          )
+      }
+    }));
+  }}
+/>
+
 
         <button
           className="delete-btn"
@@ -1044,6 +1252,31 @@ export default function EditExam() {
             }));
           }}
         />
+
+<input
+  type="number"
+  placeholder="Ball"
+  value={q.points === 0 ? "" : q.points ?? ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        translationQuestions:
+          prev.reading.translationQuestions.map((item, idx) =>
+            idx === i
+              ? {
+                  ...item,
+                  points:
+                    e.target.value === "" ? 0 : Number(e.target.value)
+                }
+              : item
+          )
+      }
+    }));
+  }}
+/>
+
 
         <button
           className="delete-btn"
