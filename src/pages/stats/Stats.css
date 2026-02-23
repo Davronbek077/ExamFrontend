@@ -130,6 +130,10 @@
     padding: 14px;
   }
 
+  .stats-container td[data-label="Daraja"] {
+    padding-left: 0;
+  }
+
   /* jadvalni card ko‘rinishga o‘tkazamiz */
   .stats-container table,
   .stats-container tbody,
