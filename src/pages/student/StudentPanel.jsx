@@ -5,58 +5,31 @@ import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import "./StudentPanel.css";
 
 export default function StudentPanel() {
-  const [levels, setLevels] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState(null);
   const [exams, setExams] = useState([]);
   const navigate = useNavigate();
 
-  // LEVEL LARNI OLISH
   useEffect(() => {
-    api.get("/exams/levels").then(res => {
-      setLevels(res.data);
-    });
+    const fetchAllExams = async () => {
+      try {
+        const res = await api.get("/exams/all");
+        setExams(res.data);
+      } catch (err) {
+        console.error("Imtihonlarni olishda xatolik:", err);
+      }
+    };
+    fetchAllExams()
   }, []);
-
-  // LEVEL BO‘YICHA EXAM
-  const fetchExamsByLevel = async (level) => {
-    setSelectedLevel(level);
-    const res = await api.get(`/exams/by-level/${level}`);
-    setExams(res.data);
-  };
-
-  const goBackToLevels = () => {
-    setSelectedLevel(null);
-    setExams([]);
-  };
 
   return (
     <div className="student-container">
       <h2>Student Panel</h2>
-
-      {/* LEVELS */}
-      {!selectedLevel && (
-        <>
-        <h3 className="select-level-title">
-          Select exam level
-        </h3>
-        <div className="levels">
-          {levels.map((level) => (
-            <button key={level} onClick={() => fetchExamsByLevel(level)}>
-              {level}
-            </button>
-          ))}
-        </div>
-        </>
-      )}
       
-      {/* EXAMS */}
-      {selectedLevel && (
-        <div className="exam-section">
+      <div className="exam-section">
           <button className="back-btn" onClick={() => navigate(-1)}>
       <MdOutlineKeyboardBackspace className="back-icon" /> Back
       </button>
           <h3 className="student-exam-title">
-            {selectedLevel} imtihonlari
+             Barcha imtihonlar
           </h3>
 
           <div className="exam-list student-exam-list">
@@ -72,7 +45,6 @@ export default function StudentPanel() {
             ))}
           </div>
         </div>
-      )}
     </div>
   );
 }

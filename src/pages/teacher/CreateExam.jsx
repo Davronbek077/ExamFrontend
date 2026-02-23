@@ -55,7 +55,7 @@ export default function TeacherPanel() {
       ...questions,
       {
         type: "mcq",
-  
+        level: "",
         questionText: "",
         options: ["", "", "", ""],
         word: "",
@@ -102,7 +102,7 @@ export default function TeacherPanel() {
       ...reading,
       tfQuestions: [
         ...reading.tfQuestions,
-        {statement: "", correct: "true", points: ""}
+        {statement: "", correct: "true", points: "", level: ""}
       ]
     });
   };
@@ -129,7 +129,7 @@ export default function TeacherPanel() {
 
   // --- LISTENING TRUE/FALSE ---
   const addListeningTF = () => {
-    setListeningTF([...listeningTF, { statement: "", correct: true, points: "" }]);
+    setListeningTF([...listeningTF, { statement: "", correct: true, points: "", level: "" }]);
   };
 
   const updateListeningTF = (i, field, value) => {
@@ -142,7 +142,7 @@ export default function TeacherPanel() {
   const addListeningGap = () => {
     setListeningGaps([
       ...listeningGaps,
-      { sentence: "", correctWord: "", points: "" }   // ✅ answer emas endi correctWord
+      { sentence: "", correctWord: "", points: "", level: "" }   // ✅ answer emas endi correctWord
     ]);
   };
 
@@ -157,7 +157,7 @@ export default function TeacherPanel() {
       ...reading,
       gapQuestions: [
         ...reading.gapQuestions,
-        {sentence: "", correctWord: "", points: ""}
+        {sentence: "", correctWord: "", points: "", level: ""}
       ]
     });
   };
@@ -170,7 +170,8 @@ export default function TeacherPanel() {
         {
           question: "",
           keywords: [],
-          maxPoints: ""
+          maxPoints: "",
+          level: ""
         }
       ]
     });
@@ -184,27 +185,30 @@ export default function TeacherPanel() {
         {
           sentence: "",        // passage’dan olingan gap
           correctAnswer: "",   // to‘g‘ri tarjima
-          points: ""
+          points: "",
+          level: ""
         }
       ]
     });
   };  
+
+  const safeLevel = (lvl) => {
+    const levels = ["Beginner","Elementary","Pre-intermediate","Pre-IELTS","IELTS-Foundation","IELTS-Max"];
+    return levels.includes(lvl) ? lvl : "Beginner";
+  };
 
   const createExam = async () => {
     if (!title) {
       toast.error("Imtihon nomini kiriting")
       return;
     };
-    if (!level) {
-      toast.error("Imtihon darajasini tanlang")
-      return;
-    }
   
     try {
       const questionsArr = questions
         .filter(q => ["mcq", "truefalse", "gapfill"].includes(q.type))
         .map(q => ({
           type: q.type,
+          level: safeLevel(q.level ?? ""),
           questionText: q.questionText,
           options: q.options || [],
           correctAnswer: q.correctAnswer,
@@ -218,6 +222,7 @@ export default function TeacherPanel() {
           q.correctSentence.trim()
         )
         .map(q => ({
+          level: safeLevel(q.level),
           scrambledWords: q.scrambledWords,
           correctSentence: q.correctSentence,
           points: Number(q.points || 0)
@@ -230,6 +235,7 @@ export default function TeacherPanel() {
           Object.keys(q.tenseAnswers || {}).length
         )
         .map(q => ({
+          level: safeLevel(q.level),
           baseSentence: q.baseSentence,
           transforms: Object.entries(q.tenseAnswers).map(
             ([tense, correctSentence]) => ({
@@ -244,6 +250,7 @@ export default function TeacherPanel() {
         const completeArr = questions
         .filter(q => q.type === "complete")
         .map(q => ({
+          level: safeLevel(q.level),
           wordBank: q.wordBank.split(",").map(w => w.trim()),
           sentences: q.sentences,
           pointsPerSentence: Number(q.pointsPerSentence || 0)
@@ -254,6 +261,7 @@ export default function TeacherPanel() {
         .map(q => ({
           word: q.word,
           correctAnswer: q.correctAnswer,
+          level: safeLevel(q.level),
           points: Number(q.points || 0)
         }));
 
@@ -262,6 +270,7 @@ export default function TeacherPanel() {
         .map(q => ({
           wrongSentence: q.wrongSentence,
           correctSentence: q.correctSentence,
+          level: safeLevel(q.level),
           points: Number(q.points || 0)
         }));
 
@@ -282,13 +291,13 @@ export default function TeacherPanel() {
     affirmative: q.affirmative,
     negative: q.negative,
     question: q.questionForm,
+    level: safeLevel(q.level),
     points: Number(q.points || 0)
   }));
 
 
       await api.post("/exams/create", {
         title,
-        level,
         timeLimit,
         passPercentage,
         questions: questionsArr,
@@ -380,19 +389,6 @@ export default function TeacherPanel() {
           onChange={(e) => setPassPercentage(e.target.value)}
         />
 
-<select
-  className="level-select"
-  value={level}
-  onChange={(e) => setLevel(e.target.value)}
->
-  <option value="">Imtihon darajasini tanlang</option>
-  <option value="Beginner">Beginner</option>
-  <option value="Elementary">Elementary</option>
-  <option value="Pre-intermediate">Pre-intermediate</option>
-  <option value="Pre-IELTS">Pre-IELTS</option>
-  <option value="IELTS-Foundation">IELTS-Foundation</option>
-  <option value="IELTS-Max">IELTS-Max</option>
-</select>
       </div>
 
       {/* LISTENING QUESTIONS */}
@@ -425,6 +421,21 @@ export default function TeacherPanel() {
     updateListeningTF(i, "points", e.target.value)
   }
 />
+
+<select
+  value={item.level}
+  onChange={(e) =>
+    updateListeningTF(i, "level", safeLevel(e.target.value))
+  }
+>
+  <option value="">Level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
           </div>
         ))}
         <button onClick={addListeningTF}>+ True/False qo‘shish</button>
@@ -457,6 +468,21 @@ export default function TeacherPanel() {
   }
 />
 
+<select
+  value={item.level}
+  onChange={(e) =>
+    updateListeningGap(i, "level", safeLevel(e.target.value))
+  }
+>
+  <option value="">Level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
+
           </div>
         ))}
         <button onClick={addListeningGap}>+ Gapfill qo‘shish</button>
@@ -480,6 +506,19 @@ export default function TeacherPanel() {
               <option value="grammar">Grammar Correction</option>
               <option value="sentenceBuild">Grammar Sentence Build</option>
               <option value="tense">Tense Transformation</option>
+            </select>
+
+            <select
+              value={q.level}
+              onChange={(e) => updateQuestion(i, "level", safeLevel(e.target.value))}
+            >
+              <option value="">Level tanlang</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Elementary">Elementary</option>
+              <option value="Pre-intermediate">Pre-intermediate</option>
+              <option value="Pre-IELTS">Pre-IELTS</option>
+              <option value="IELTS-Foundation">IELTS-Foundation</option>
+              <option value="IELTS-Max">IELTS-Max</option>
             </select>
 
             <input
@@ -506,6 +545,7 @@ export default function TeacherPanel() {
             {(q.type === "mcq" ||
               q.type === "truefalse" ||
               q.type === "gapfill") && (
+              <>
               <input
                 type="text"
                 placeholder="To‘g‘ri javob"
@@ -514,6 +554,14 @@ export default function TeacherPanel() {
                   updateQuestion(i, "correctAnswer", e.target.value)
                 }
               />
+              <input type="number" 
+              placeholder="Ball"
+              value={q.points ?? ""}
+              onChange={(e) => 
+                updateQuestion(i, "points", e.target.value)
+              }
+              />
+              </>
             )}
 
             {/* GRAMMAR */}
@@ -668,12 +716,12 @@ export default function TeacherPanel() {
 
 <input
   type="number"
+  placeholder="Ball"
   value={q.points ?? ""}
   onChange={(e) =>
     updateQuestion(i, "points", e.target.value)
   }
 />
-
 
   </div>
 )}
@@ -726,6 +774,7 @@ export default function TeacherPanel() {
     updateQuestion(i, "pointsPerSentence", e.target.value)
   }
 />
+
     </div>
 
     <button
@@ -758,6 +807,7 @@ export default function TeacherPanel() {
 
 <input
   type="number"
+  placeholder="Ball"
   value={q.points ?? ""}
   onChange={(e) =>
     updateQuestion(i, "points", e.target.value)
@@ -844,6 +894,23 @@ export default function TeacherPanel() {
         setReading({...reading, tfQuestions: arr});
       }}
       />
+
+<select
+  value={q.level}
+  onChange={e => {
+    const arr = [...reading.tfQuestions];
+    arr[i].level = safeLevel(e.target.value);
+    setReading({ ...reading, tfQuestions: arr });
+  }}
+>
+  <option value="">Level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
     </div>
   ))}
 
@@ -883,6 +950,23 @@ export default function TeacherPanel() {
         setReading({...reading, gapQuestions: arr});
       }}
       />
+
+<select
+  value={q.level}
+  onChange={e => {
+    const arr = [...reading.gapQuestions];
+    arr[i].level = safeLevel(e.target.value);
+    setReading({ ...reading, gapQuestions: arr });
+  }}
+>
+  <option value="">Level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
     </div>
   ))}
 
@@ -927,6 +1011,22 @@ export default function TeacherPanel() {
     setReading(r);
   }}
 />
+
+<select value={q.level}
+onChange={e => {
+  const r = {...reading};
+  r.shortAnswerQuestions[i].level = safeLevel(e.target.value);
+  setReading(r);
+}}
+>
+<option value="">Level</option>
+<option value="Beginner">Beginner</option>
+<option value="Elementary">Elementary</option>
+<option value="Pre-intermediate">Pre-intermediate</option>
+<option value="Pre-IELTS">Pre-IELTS</option>
+<option value="IELTS-Foundation">IELTS-Foundation</option>
+<option value="IELTS-Max">IELTS-Max</option>
+</select>
 
     <button
       className="shortAnswer-delete-btn"
@@ -983,7 +1083,22 @@ export default function TeacherPanel() {
   }}
 />
 
-
+<select
+  value={q.level}
+  onChange={e => {
+    const arr = [...reading.translationQuestions];
+    arr[i].level = safeLevel(e.target.value);
+    setReading({ ...reading, translationQuestions: arr });
+  }}
+>
+  <option value="">Level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
   </div>
 ))}
 <button onClick={addReadingTranslation}>

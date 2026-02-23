@@ -76,7 +76,8 @@ export default function EditExam() {
           questionText: "",
           options: ["", "", "", ""],
           correctAnswer: "",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -85,7 +86,8 @@ export default function EditExam() {
         data: {
           questionText: "",
           correctAnswer: "true",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -94,7 +96,8 @@ export default function EditExam() {
         data: {
           questionText: "",
           correctAnswer: "",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -103,7 +106,8 @@ export default function EditExam() {
         data: {
           word: "",
           correctAnswer: "",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -111,6 +115,7 @@ export default function EditExam() {
         field: "completeQuestions",
         data: {
           wordBank: [],
+          level: "",
           sentences: [{ text: "", correctWord: "" }],
           pointsPerSentence: 1
         }
@@ -121,7 +126,8 @@ export default function EditExam() {
         data: {
           wrongSentence: "",
           correctSentence: "",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -130,7 +136,8 @@ export default function EditExam() {
         data: {
           scrambledWords: "",
           correctSentence: "",
-          points: 1
+          points: 1,
+          level: ""
         }
       },
   
@@ -141,7 +148,8 @@ export default function EditExam() {
           affirmative: "",
           negative: "",
           question: "",
-          points: 3
+          points: 3,
+          level: ""
         }
       },
   
@@ -149,7 +157,8 @@ export default function EditExam() {
         field: "tenseTransforms",
         data: {
           baseSentence: "",
-          transforms: []
+          transforms: [],
+          level: ""
         }
       }
     };
@@ -169,10 +178,6 @@ export default function EditExam() {
 
   const saveExam = async () => {
     try {
-      if (!exam.level) {
-        toast.error("Imtihon darajasini tanlang")
-        return;
-      }
       
       const payload = { ...exam };
   
@@ -244,18 +249,6 @@ export default function EditExam() {
           }
         />
 
-        <select value={exam.level || ""}
-        onChange={e => setExam({...exam, level: e.target.value})}
-        >
-          <option value="">Imtihon darajasini tanlang</option>
-          <option value="Beginner">Beginner</option>
-          <option value="Elementary">Elementary</option>
-          <option value="Pre-intermediate">Pre-intermediate</option>
-          <option value="Pre-IELTS">Pre-IELTS</option>
-          <option value="IELTS-Foundation">IELTS-Foundation</option>
-          <option value="IELTS-Max">IELTS-Max</option>
-        </select>
-
       </div>
 
       <>
@@ -298,6 +291,21 @@ export default function EditExam() {
         )
       }
       />
+
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("listeningTF", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
       <button
         className="delete-btn"
@@ -356,6 +364,21 @@ export default function EditExam() {
     )
   }
 />
+
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("listeningGaps", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
 
       <button
@@ -471,6 +494,21 @@ export default function EditExam() {
   }
 />
 
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("questions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
+
 
               <button onClick={() => deleteFromArray("questions", i)}>Delete</button>
             </div>
@@ -533,6 +571,21 @@ export default function EditExam() {
     )
   }
 />
+
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("sentenceBuildQuestions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
               <button onClick={() => deleteFromArray("sentenceBuildQuestions", i)}>Delete</button>
             </div>
@@ -604,6 +657,22 @@ export default function EditExam() {
     setExam({ ...exam, tenseTransforms: copy });
   }}
 />
+
+<select value={tr.level || ""}
+onChange={e => {
+  const copy = [...exam.tenseTransforms];
+  copy[i].transforms[ti].level = e.target.value;
+  setExam({...exam, tenseTransforms: copy});
+}}
+>
+<option value="">Level tanlang</option>
+<option value="Beginner">Beginner</option>
+<option value="Elementary">Elementary</option>
+<option value="Pre-intermediate">Pre-intermediate</option>
+<option value="Pre-IELTS">Pre-IELTS</option>
+<option value="IELTS-Foundation">IELTS-Foundation</option>
+<option value="IELTS-Max">IELTS-Max</option>
+</select>
 
 
             <button
@@ -690,6 +759,21 @@ export default function EditExam() {
   }
 />
 
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("grammarQuestions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
+
 
         <button
           className="delete-btn"
@@ -738,6 +822,21 @@ export default function EditExam() {
     )
   }
 />
+
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("translateQuestions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
               <button onClick={() => deleteFromArray("translateQuestions", i)}>Delete</button>
             </div>
@@ -806,6 +905,21 @@ export default function EditExam() {
   }
 />
 
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("completeQuestions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
+
 
         <button
           className="add-btn"
@@ -865,6 +979,21 @@ export default function EditExam() {
             )
           }
         />
+
+<select
+  value={q.level || ""}
+  onChange={e =>
+    updateArray("correctionQuestions", i, "level", e.target.value)
+  }
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
         <button
           className="delete-btn"
@@ -960,6 +1089,28 @@ export default function EditExam() {
   }}
 />
 
+<select
+  value={q.level || ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        tfQuestions: prev.reading.tfQuestions.map((item, idx) =>
+          idx === i ? { ...item, level: e.target.value } : item
+        )
+      }
+    }));
+  }}
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
 <button
   className="delete-btn"
@@ -1054,6 +1205,28 @@ export default function EditExam() {
   }}
 />
 
+<select
+  value={q.level || ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        gapQuestions: prev.reading.gapQuestions.map((item, idx) =>
+          idx === i ? { ...item, level: e.target.value } : item
+        )
+      }
+    }));
+  }}
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
 <button
   className="delete-btn"
@@ -1166,6 +1339,29 @@ export default function EditExam() {
   }}
 />
 
+<select
+  value={q.level || ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        shortAnswerQuestions: prev.reading.shortAnswerQuestions.map((item, idx) =>
+          idx === i ? { ...item, level: e.target.value } : item
+        )
+      }
+    }));
+  }}
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
+
 
         <button
           className="delete-btn"
@@ -1276,6 +1472,29 @@ export default function EditExam() {
     }));
   }}
 />
+
+<select
+  value={q.level || ""}
+  onChange={e => {
+    setExam(prev => ({
+      ...prev,
+      reading: {
+        ...prev.reading,
+        translationQuestions: prev.reading.translationQuestions.map((item, idx) =>
+          idx === i ? { ...item, level: e.target.value } : item
+        )
+      }
+    }));
+  }}
+>
+  <option value="">Level tanlang</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Elementary">Elementary</option>
+  <option value="Pre-intermediate">Pre-intermediate</option>
+  <option value="Pre-IELTS">Pre-IELTS</option>
+  <option value="IELTS-Foundation">IELTS-Foundation</option>
+  <option value="IELTS-Max">IELTS-Max</option>
+</select>
 
 
         <button

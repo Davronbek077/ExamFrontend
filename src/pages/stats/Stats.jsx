@@ -89,6 +89,7 @@ export default function Stats() {
           <thead>
             <tr className="table-title">
               <th><span className="th-text1">Ism</span></th>
+              <th><span className="th-text2">Daraja</span></th>
               <th><span className="th-text">Foiz</span></th>
               <th><span className="th-text3">Holat</span></th>
               <th><span className="th-text4">Sana</span></th>
@@ -98,6 +99,7 @@ export default function Stats() {
             {filteredResults.map(r => (
               <tr key={r._id} onClick={() => navigate(`/results/${r._id}`)} style={{cursor: "pointer"}}>
                 <td className="col-name" data-label="Ism">{r.studentName}</td>
+                <td data-label="Daraja">{r.studentLevel || "-"}</td>
                 <td data-label="Foiz">{r.percentage}%</td>
                 <td data-label="Holat">
                   <span

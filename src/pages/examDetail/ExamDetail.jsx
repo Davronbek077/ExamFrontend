@@ -43,7 +43,6 @@ export default function ExamDetail() {
       <h2>{exam.title}</h2>
       <p>Vaqt limiti: {exam.timeLimit} daqiqa</p>
       <p>O‘tish foizi: {exam.passPercentage}%</p>
-      <p className="exam-level">Daraja: <b>{exam.level}</b></p>
 
       <hr />
 
@@ -69,6 +68,12 @@ export default function ExamDetail() {
           {q.points !== undefined && (
             <p><b>Ball:</b> {q.points}</p>
           )}
+
+          {q.level && (
+            <p className="question-level">
+              <b>Level:</b> {q.level}
+            </p>
+          )}
         </div>
       ))}
 
@@ -84,6 +89,12 @@ export default function ExamDetail() {
               
               {q.points !== undefined && (
                 <p><b>Ball:</b> {q.points}</p>
+              )}
+              
+              {q.level && (
+                <p className="question-level">
+                  <b>Level:</b> {q.level}
+                </p>
               )}
             </div>
           ))}
@@ -101,6 +112,12 @@ export default function ExamDetail() {
               {q.points !== undefined && (
                 <p><b>Ball:</b> {q.points}</p>
               )}
+              
+              {q.level && (
+                <p className="question-level">
+                  <b>Level:</b> {q.level}
+                </p>
+              )}
             </div>
           ))}
         </>
@@ -117,6 +134,12 @@ export default function ExamDetail() {
               {q.points !== undefined && (
                 <p><b>Ball:</b> {q.points}</p>
               )}
+              
+              {q.level && (
+            <p className="question-level">
+              <b>Level:</b> {q.level}
+            </p>
+          )}
             </div>
           ))}
         </>
@@ -138,6 +161,12 @@ export default function ExamDetail() {
                   <p>
                     <b>Ball:</b> {tr.points}
                   </p>
+
+                  {tr.level && (
+                <p className="question-level">
+              <b>Level:</b> {tr.level}
+               </p>
+                )}
                 </div>
               ))}
 
@@ -166,6 +195,11 @@ export default function ExamDetail() {
             <p>{j + 1}) {s.text}</p>
             <p className="correct">✔ To‘g‘ri javob: {s.correctWord}</p>
             <p><b>Ball:</b> {block.pointsPerSentence}</p>
+            {s.level && (
+                <p className="question-level">
+                  <b>Level:</b> {s.level}
+                </p>
+              )}
           </div>
         ))}
       </div>
@@ -186,6 +220,12 @@ export default function ExamDetail() {
       {q.points !== undefined && (
         <p><b>Ball:</b> {q.points}</p>
       )}
+
+{q.level && (
+  <p className="question-level">
+    <b>Level:</b> {q.level}
+  </p>
+)}
     </div>
   ))}
   </>
@@ -204,6 +244,12 @@ export default function ExamDetail() {
       {q.points !== undefined && (
         <p><b>Ball:</b> {q.points}</p>
       )}
+
+{q.level && (
+  <p className="question-level">
+    <b>Level:</b> {q.level}
+  </p>
+)}
     </div>
   ))}
   </>
@@ -240,7 +286,11 @@ export default function ExamDetail() {
         </div>
 
         <p><b>Ball:</b> {q.points}</p>
-
+        {q.level && (
+         <p className="question-level">
+          <b>Level:</b> {q.level}
+          </p>
+         )}
       </div>
     ))}
   </>
@@ -265,6 +315,11 @@ export default function ExamDetail() {
         <p><b>{i + 1}) {q.statement}</b></p>
         <p className="correct">✔ {q.correct}</p>
         <p><b>Ball:</b> {q.points}</p>
+        {q.level && (
+          <p className="question-level">
+            <b>Level:</b> {q.level}
+          </p>
+        )}
       </div>
     ))}
   </>
@@ -279,6 +334,11 @@ export default function ExamDetail() {
         <p><b>{i + 1})</b> {q.sentence}</p>
         <p className="correct">✔ {q.correctWord}</p>
         <p><b>Ball:</b> {q.points}</p>
+        {q.level && (
+          <p className="question-level">
+            <b>Level:</b> {q.level}
+          </p>
+        )}
       </div>
     ))}
   </>
@@ -297,6 +357,11 @@ export default function ExamDetail() {
           ✔ To‘g‘ri javob: {q.correctAnswer}
         </p>
         <p><b>Ball:</b> {q.points}</p>
+        {q.level && (
+          <p className="question-level">
+            <b>Level:</b> {q.level}
+          </p>
+        )}
       </div>
     ))}
   </>
@@ -323,7 +388,11 @@ export default function ExamDetail() {
           </p>
 
           <p><b>Ball:</b> {q.maxPoints}</p>
-
+          {q.level && (
+          <p className="question-level">
+            <b>Level:</b> {q.level}
+          </p>
+        )}
         </div>
       ))}
     </>

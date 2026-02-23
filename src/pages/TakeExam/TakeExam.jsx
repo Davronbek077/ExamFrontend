@@ -581,6 +581,7 @@ export default function TakeExam() {
 
             <p>Ball: <b>{result.autoScore}</b></p>
             <p>Foiz: <b>{result.autoPercentage}%</b></p>
+            <p>Daraja: {result?.studentLevel}</p>
 
             {result.autoPercentage >= exam.passPercentage ? (
               <p style={{ color: "green", fontWeight: "bold", fontSize: 18 }}>

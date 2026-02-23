@@ -71,9 +71,23 @@
 
 .col-name {
   width: 30%;
-  padding-left: 12px;
-  padding-right: 12px;
+  text-align: left;
   white-space: normal;
+}
+
+.stats-container td[data-label="Daraja"] {
+  padding-left: 6px;
+  text-align: left;
+}
+.stats-container td[data-label="Foiz"] {
+  text-align: right;
+}
+.stats-container td[data-label="Holat"] {
+  text-align: right;
+}
+
+.stats-container td[data-label="Sana"] {
+  text-align: right;
 }
 
 /* ===== TBODY ===== */
