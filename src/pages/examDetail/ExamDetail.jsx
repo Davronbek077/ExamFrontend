@@ -48,10 +48,7 @@ export default function ExamDetail() {
 
       <h3><FaRegCircleQuestion /> Test Savollar</h3>
 
-      {exam.questions?.filter(q =>
-        q.questionText?.trim() &&
-        q.correctAnswer?.toString().trim()
-      ).map((q, i) => (
+      {exam.questions?.map((q, i) => (
         <div key={i} className="question-card">
           <p><b>{i + 1}) {q.questionText}</b></p>
 
